@@ -9,9 +9,9 @@ import java.util.List;
 
 public interface TransactionService {
     ApiResponse makeTransaction(TransactionRequest transactionRequest);
-    TransactionDto transactionsByCode(String id);
+    List<TransactionDto> transactionsByCode(String id);
     List<TransactionDto> allTransactions();
-    List<TransactionDto> transactionByInterval(Date fromDate, Date toDate);
+    List<TransactionDto> transactionByInterval(String fromDate, String toDate);
     List<TransactionDto> ownTransactions();
 
 }

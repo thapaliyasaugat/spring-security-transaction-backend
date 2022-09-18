@@ -63,6 +63,7 @@ public class AuthServiceImpl implements AuthService {
         user.setEmail(signUpRequest.getEmail());
         user.setStatus(UserStatus.ACTIVE.status);
         user.setRoles(roleSet);
+        user.setBalance(50000.00);
         user.setPassword(passwordEncoder.encode(signUpRequest.getPassword()));
         userRepo.save(user);
         ApiResponse apiResponse = new ApiResponse();

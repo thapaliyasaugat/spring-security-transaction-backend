@@ -21,6 +21,7 @@ public class User extends DateAudit{
     private String email;
     private String password;
     private String status;
+    private Double balance;
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "user_roles",
             joinColumns = @JoinColumn(name = "user_id"),

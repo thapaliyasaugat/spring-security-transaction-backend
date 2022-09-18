@@ -1,5 +1,6 @@
 package com.securitytest.securitytest.resource;
 
+import com.securitytest.securitytest.models.RoleName;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,10 +10,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserDto {
+public class RoleDto {
     private int id;
-    private String userName;
-    private String email;
-    private UserStatus status;
-    private Double balance;
+    private RoleName name;
 }

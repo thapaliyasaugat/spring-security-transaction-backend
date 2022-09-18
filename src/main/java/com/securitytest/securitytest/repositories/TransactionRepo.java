@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface TransactionRepo extends JpaRepository<Transactions,Integer> {
     Transactions findByCode(String code);
-    @Query(value = "select * from transactions where created_date between :transactionTimeStart and :transactionTimeEnd",nativeQuery = true)
+    @Query(value = "select * from transactions where created_at between :transactionTimeStart and :transactionTimeEnd",nativeQuery = true)
     List<Transactions> findAllByTransactionTimeBetween(
             Date transactionTimeStart,
             Date transactionTimeEnd);

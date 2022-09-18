@@ -36,7 +36,6 @@ public class JwtConfiguration {
                 .compact();
     }
     public String getEmailFromToken(String token) {
-//        return getClaimFromToken(token, Claims::getSubject);
         return getClaimFromToken(token,Claims::getSubject);
     }
     public <T> T getClaimFromToken(String token, Function<Claims, T> claimsResolver) {

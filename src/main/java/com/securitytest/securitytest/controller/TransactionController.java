@@ -32,7 +32,7 @@ public class TransactionController {
 
     @GetMapping("/code/{code}")
     public ResponseEntity<?> transactionByCode(@PathVariable String code) {
-        TransactionDto transactionDto = transactionService.transactionsByCode(code);
+        List<TransactionDto> transactionDto = transactionService.transactionsByCode(code);
         return new ResponseEntity<>(transactionDto, HttpStatus.OK);
     }
 
@@ -43,8 +43,8 @@ public class TransactionController {
     }
 
     @GetMapping("/time/between")
-    public ResponseEntity<?> transactionByInterval(@DateTimeFormat(pattern = "yyyy-MM-dd") Date fromDate,
-                                                   @DateTimeFormat(pattern = "yyyy-MM-dd") Date toDate) {
+    public ResponseEntity<?> transactionByInterval(@DateTimeFormat(pattern = "yyyy-MM-dd") String fromDate,
+                                                   @DateTimeFormat(pattern = "yyyy-MM-dd") String toDate) {
         log.info("from date : {}",fromDate);
         log.info("to date : {}",toDate);
         List<TransactionDto> transactionDtos = transactionService.transactionByInterval(fromDate,toDate);

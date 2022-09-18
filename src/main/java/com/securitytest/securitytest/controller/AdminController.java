@@ -21,17 +21,22 @@ public class AdminController {
         this.adminService = adminService;
     }
 
-    @PutMapping("/block/{id}")
+    @GetMapping("/test")
+    public String adminTest(){
+        return "ok";
+    }
+
+    @GetMapping("/block/{id}")
     public ResponseEntity<?> blockUser(@PathVariable int id){
         UserDto blockedUser = userService.blockUser(id);
         return new ResponseEntity<>(blockedUser, HttpStatus.OK);
     }
-    @PutMapping("/activate/{id}")
+    @GetMapping("/activate/{id}")
     public ResponseEntity<?> activateUser(@PathVariable int id){
         UserDto blockedUser = userService.activateUser(id);
         return new ResponseEntity<>(blockedUser, HttpStatus.OK);
     }
-    @PutMapping("/update_role")
+    @PutMapping("/update/role")
     public ResponseEntity<?>updateRoleOfUser(@Valid @RequestBody UpdateRoleRequest updateRoleRequest){
         UserDto user = adminService.updateRole(updateRoleRequest);
         return new ResponseEntity<>(user,HttpStatus.OK);

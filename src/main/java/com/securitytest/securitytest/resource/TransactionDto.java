@@ -12,7 +12,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public class TransactionDto {
     private String code;
-    private User customer_to;
+    private UserDto customer_to;
     private Double amount;
-    private User customer_from;
+    private UserDto customer_from;
 }

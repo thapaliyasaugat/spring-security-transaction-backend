@@ -6,13 +6,14 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class UpdateRoleRequest {
-    @NotEmpty(message = "specify whose role you want to update")
+    @NotNull(message = "specify whose role you want to update")
     private int updateRoleOfId;
     @NotEmpty(message = "specify role.")
     private String roleName;
