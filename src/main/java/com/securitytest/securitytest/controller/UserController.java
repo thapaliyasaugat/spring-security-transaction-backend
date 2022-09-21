@@ -1,15 +1,12 @@
 package com.securitytest.securitytest.controller;
 
+import com.securitytest.securitytest.resource.PageRequest;
 import com.securitytest.securitytest.resource.UserDto;
+import com.securitytest.securitytest.resource.UserPageableResponse;
 import com.securitytest.securitytest.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/user")
@@ -20,9 +17,9 @@ public class UserController {
         this.userService = userService;
     }
 
-    @GetMapping("/")
-    public ResponseEntity<List<UserDto>> getAllUsers(){
-        List<UserDto> userList = userService.allUsers();
+    @PostMapping("/")
+    public ResponseEntity<?> getAllUsers(@RequestBody PageRequest pageRequest){
+        UserPageableResponse userList = userService.allUsers(pageRequest);
         return new ResponseEntity<>(userList, HttpStatus.OK);
     }
     @GetMapping("/{id}")
@@ -30,7 +27,12 @@ public class UserController {
         return userService.userById(id);
     }
     @GetMapping("/email/{email}")
+
     public UserDto getUserByEmail(@PathVariable String email){
         return userService.userByEmail(email);
+    }
+    @GetMapping("/me/detail")
+    public UserDto ownDetail(){
+        return userService.getMyDetail();
     }
 }

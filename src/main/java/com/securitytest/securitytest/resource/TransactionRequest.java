@@ -1,10 +1,8 @@
 package com.securitytest.securitytest.resource;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
 @Getter
@@ -12,8 +10,8 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TransactionRequest {
-    @NotNull(message = "Do specify, who you want to send money")
-    private int toUser;
+    @NotEmpty(message = "Enter valid email of user for transaction.")
+    private String toUser;
     @NotNull(message = "Specify valid amount")
     private Double amount;
 }

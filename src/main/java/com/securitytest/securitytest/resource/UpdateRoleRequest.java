@@ -13,8 +13,8 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UpdateRoleRequest {
-    @NotNull(message = "specify whose role you want to update")
-    private int updateRoleOfId;
+    @NotEmpty(message = "specify whose role you want to update")
+    private String updateRoleOfEmail;
     @NotEmpty(message = "specify role.")
     private String roleName;
 }

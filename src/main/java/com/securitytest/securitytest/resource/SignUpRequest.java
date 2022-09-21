@@ -19,6 +19,7 @@ public class SignUpRequest {
     @Email(message = "email is not valid.")
     @NotEmpty(message = "email can't be empty.")
     private String email;
+    @NotEmpty(message = "password can't be empty")
     @Size(min = 6,message = "password must be greater than 6 character.")
     private String password;
 }

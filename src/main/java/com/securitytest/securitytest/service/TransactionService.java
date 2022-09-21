@@ -1,17 +1,14 @@
 package com.securitytest.securitytest.service;
 
-import com.securitytest.securitytest.resource.ApiResponse;
-import com.securitytest.securitytest.resource.TransactionDto;
-import com.securitytest.securitytest.resource.TransactionRequest;
+import com.securitytest.securitytest.resource.*;
 
-import java.util.Date;
 import java.util.List;
 
 public interface TransactionService {
     ApiResponse makeTransaction(TransactionRequest transactionRequest);
-    List<TransactionDto> transactionsByCode(String id);
-    List<TransactionDto> allTransactions();
-    List<TransactionDto> transactionByInterval(String fromDate, String toDate);
-    List<TransactionDto> ownTransactions();
+    PageableResponse transactionsByCode(TransactionByCode transactionByCode);
+    PageableResponse allTransactions(PageRequest pageRequest);
+    PageableResponse transactionByInterval(String fromDate, String toDate, PageRequest pageRequest);
+    PageableResponse ownTransactions(PageRequest pageRequest,String filter);
 
 }

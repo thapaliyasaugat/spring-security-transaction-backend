@@ -1,8 +1,6 @@
 package com.securitytest.securitytest.controller;
 
-import com.securitytest.securitytest.resource.ApiResponse;
-import com.securitytest.securitytest.resource.TransactionDto;
-import com.securitytest.securitytest.resource.TransactionRequest;
+import com.securitytest.securitytest.resource.*;
 import com.securitytest.securitytest.service.TransactionService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -11,7 +9,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.Date;
 import java.util.List;
 
 @Slf4j
@@ -30,30 +27,31 @@ public class TransactionController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @GetMapping("/code/{code}")
-    public ResponseEntity<?> transactionByCode(@PathVariable String code) {
-        List<TransactionDto> transactionDto = transactionService.transactionsByCode(code);
+    @PostMapping("/code")
+    public ResponseEntity<?> transactionByCode(@RequestBody TransactionByCode transactionByCode) {
+        PageableResponse transactionDto = transactionService.transactionsByCode(transactionByCode);
         return new ResponseEntity<>(transactionDto, HttpStatus.OK);
     }
 
-    @GetMapping("/list")
-    public ResponseEntity<?> allTransactions() {
-        List<TransactionDto> transactionDtos = transactionService.allTransactions();
+    @PostMapping("/list")
+    public ResponseEntity<?> allTransactions(@RequestBody PageRequest pageRequest) {
+        PageableResponse transactionDtos = transactionService.allTransactions(pageRequest);
         return new ResponseEntity<>(transactionDtos, HttpStatus.OK);
     }
 
-    @GetMapping("/time/between")
+    @PostMapping("/time/between")
     public ResponseEntity<?> transactionByInterval(@DateTimeFormat(pattern = "yyyy-MM-dd") String fromDate,
-                                                   @DateTimeFormat(pattern = "yyyy-MM-dd") String toDate) {
+                                                   @DateTimeFormat(pattern = "yyyy-MM-dd") String toDate,
+                                                   @RequestBody PageRequest pageRequest) {
         log.info("from date : {}",fromDate);
         log.info("to date : {}",toDate);
-        List<TransactionDto> transactionDtos = transactionService.transactionByInterval(fromDate,toDate);
+        PageableResponse transactionDtos = transactionService.transactionByInterval(fromDate,toDate,pageRequest);
         return new ResponseEntity<>(transactionDtos, HttpStatus.OK);
     }
 
-    @GetMapping("/my_transactions")
-    public ResponseEntity<?> myTransactions() {
-        List<TransactionDto> transactions = transactionService.ownTransactions();
+    @PostMapping("/my_transactions")
+    public ResponseEntity<?> myTransactions(@RequestBody PageRequest pageRequest,@RequestParam("filter") String filter) {
+        PageableResponse transactions = transactionService.ownTransactions(pageRequest,filter);
         return new ResponseEntity<>(transactions, HttpStatus.OK);
     }
 }

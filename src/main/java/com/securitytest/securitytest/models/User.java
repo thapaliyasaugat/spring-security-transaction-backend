@@ -1,5 +1,6 @@
 package com.securitytest.securitytest.models;
 
+import com.securitytest.securitytest.resource.UserStatus;
 import lombok.*;
 import javax.persistence.*;
 import java.util.HashSet;
@@ -20,7 +21,10 @@ public class User extends DateAudit{
     @Column(unique = true)
     private String email;
     private String password;
-    private String status;
+
+    @Enumerated(EnumType.STRING)
+    private UserStatus status;
+
     private Double balance;
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "user_roles",

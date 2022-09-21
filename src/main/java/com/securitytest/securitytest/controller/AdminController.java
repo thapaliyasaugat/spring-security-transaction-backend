@@ -21,11 +21,6 @@ public class AdminController {
         this.adminService = adminService;
     }
 
-    @GetMapping("/test")
-    public String adminTest(){
-        return "ok";
-    }
-
     @GetMapping("/block/{id}")
     public ResponseEntity<?> blockUser(@PathVariable int id){
         UserDto blockedUser = userService.blockUser(id);
