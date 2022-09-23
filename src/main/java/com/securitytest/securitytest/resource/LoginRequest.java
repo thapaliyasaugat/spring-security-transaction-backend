@@ -1,9 +1,6 @@
 package com.securitytest.securitytest.resource;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.validation.constraints.NotEmpty;
 
@@ -11,6 +8,7 @@ import javax.validation.constraints.NotEmpty;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class LoginRequest {
     @NotEmpty(message = "email can't be empty")
     private String email;

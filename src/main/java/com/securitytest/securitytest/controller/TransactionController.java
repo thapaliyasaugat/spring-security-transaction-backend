@@ -9,7 +9,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.List;
 
 @Slf4j
 @RestController
@@ -34,7 +33,7 @@ public class TransactionController {
     }
 
     @PostMapping("/list")
-    public ResponseEntity<?> allTransactions(@RequestBody PageRequest pageRequest) {
+    public ResponseEntity<?> allTransactions(@RequestBody PageRequestObj pageRequest) {
         PageableResponse transactionDtos = transactionService.allTransactions(pageRequest);
         return new ResponseEntity<>(transactionDtos, HttpStatus.OK);
     }
@@ -42,7 +41,7 @@ public class TransactionController {
     @PostMapping("/time/between")
     public ResponseEntity<?> transactionByInterval(@DateTimeFormat(pattern = "yyyy-MM-dd") String fromDate,
                                                    @DateTimeFormat(pattern = "yyyy-MM-dd") String toDate,
-                                                   @RequestBody PageRequest pageRequest) {
+                                                   @RequestBody PageRequestObj pageRequest) {
         log.info("from date : {}",fromDate);
         log.info("to date : {}",toDate);
         PageableResponse transactionDtos = transactionService.transactionByInterval(fromDate,toDate,pageRequest);
@@ -50,7 +49,7 @@ public class TransactionController {
     }
 
     @PostMapping("/my_transactions")
-    public ResponseEntity<?> myTransactions(@RequestBody PageRequest pageRequest,@RequestParam("filter") String filter) {
+    public ResponseEntity<?> myTransactions(@RequestBody PageRequestObj pageRequest, @RequestParam("filter") String filter) {
         PageableResponse transactions = transactionService.ownTransactions(pageRequest,filter);
         return new ResponseEntity<>(transactions, HttpStatus.OK);
     }

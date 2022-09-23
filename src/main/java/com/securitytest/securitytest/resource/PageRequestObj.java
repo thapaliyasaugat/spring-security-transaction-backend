@@ -1,15 +1,13 @@
 package com.securitytest.securitytest.resource;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class PageRequest {
+@Builder
+public class PageRequestObj {
     private int pageNumber;
     private int pageSize;
 }

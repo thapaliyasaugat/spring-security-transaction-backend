@@ -6,7 +6,7 @@ import com.securitytest.securitytest.resource.*;
 
 public interface UserService {
     UserDto userById(int id);
-    UserPageableResponse allUsers(PageRequest pageRequest);
+    UserPageableResponse allUsers(PageRequestObj pageRequest);
     UserDto blockUser(int id);
     UserDto activateUser(int id);
     UserDto userByEmail(String email);

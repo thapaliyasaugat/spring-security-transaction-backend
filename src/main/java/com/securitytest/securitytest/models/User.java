@@ -12,6 +12,7 @@ import java.util.Set;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class User extends DateAudit{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -1,9 +1,6 @@
 package com.securitytest.securitytest.resource;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
@@ -12,9 +9,12 @@ import javax.validation.constraints.NotNull;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class UpdateRoleRequest {
+
     @NotEmpty(message = "specify whose role you want to update")
     private String updateRoleOfEmail;
+
     @NotEmpty(message = "specify role.")
     private String roleName;
 }

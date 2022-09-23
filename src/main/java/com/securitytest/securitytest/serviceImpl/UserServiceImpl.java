@@ -32,7 +32,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserPageableResponse allUsers(PageRequest pageRequest) {
+    public UserPageableResponse allUsers(PageRequestObj pageRequest) {
         Pageable p = org.springframework.data.domain.PageRequest.of(pageRequest.getPageNumber(),pageRequest.getPageSize());
         Page<User> users = userRepo.findAll(p);
         List<UserDto> userDtos = users.getContent().stream().map(u->modelMapper.map(u, UserDto.class)).collect(Collectors.toList());

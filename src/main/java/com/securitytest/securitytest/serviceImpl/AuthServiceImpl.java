@@ -2,6 +2,7 @@ package com.securitytest.securitytest.serviceImpl;
 
 import com.securitytest.securitytest.configuration.JwtConfiguration;
 import com.securitytest.securitytest.models.Role;
+import com.securitytest.securitytest.models.RoleName;
 import com.securitytest.securitytest.models.User;
 import com.securitytest.securitytest.resource.*;
 import com.securitytest.securitytest.service.AuthService;
@@ -14,8 +15,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -58,7 +59,7 @@ public class AuthServiceImpl implements AuthService {
     @Override
     @Transactional
     public ApiResponse signUpUser(SignUpRequest signUpRequest) {
-        RoleDto role = roleService.findByName("CUSTOMER");
+        RoleDto role = roleService.findByName(RoleName.CUSTOMER.toString());
         if(role==null) throw new RuntimeException("No Role Specified");
         Set<Role> roleSet = new HashSet<>();
         roleSet.add(modelMapper.map(role,Role.class));

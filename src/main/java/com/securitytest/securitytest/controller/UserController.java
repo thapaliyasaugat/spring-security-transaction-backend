@@ -1,6 +1,6 @@
 package com.securitytest.securitytest.controller;
 
-import com.securitytest.securitytest.resource.PageRequest;
+import com.securitytest.securitytest.resource.PageRequestObj;
 import com.securitytest.securitytest.resource.UserDto;
 import com.securitytest.securitytest.resource.UserPageableResponse;
 import com.securitytest.securitytest.service.UserService;
@@ -18,7 +18,7 @@ public class UserController {
     }
 
     @PostMapping("/")
-    public ResponseEntity<?> getAllUsers(@RequestBody PageRequest pageRequest){
+    public ResponseEntity<?> getAllUsers(@RequestBody PageRequestObj pageRequest){
         UserPageableResponse userList = userService.allUsers(pageRequest);
         return new ResponseEntity<>(userList, HttpStatus.OK);
     }

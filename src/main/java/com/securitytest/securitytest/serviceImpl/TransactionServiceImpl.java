@@ -8,6 +8,7 @@ import com.securitytest.securitytest.service.TransactionService;
 import com.securitytest.securitytest.service.UserService;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
@@ -80,7 +81,7 @@ private final ModelMapper modelMapper;
 
 
     @Override
-    public PageableResponse allTransactions(PageRequest pageRequest) {
+    public PageableResponse allTransactions(PageRequestObj pageRequest) {
         Pageable p = org.springframework.data.domain.PageRequest.of(pageRequest.getPageNumber(), pageRequest.getPageSize(),Sort.by("createdAt").descending());
         Page<Transactions> listOfTransactions = transactionRepo.findAll(p);
         return getTransactionPageableResponse(listOfTransactions);
@@ -98,12 +99,12 @@ private final ModelMapper modelMapper;
     }
 
     @Override
-    public PageableResponse transactionByInterval(String fromDate , String toDate , PageRequest pageRequest) {
+    public PageableResponse transactionByInterval(String fromDate , String toDate , PageRequestObj pageRequest) {
         try {
             Date from = new SimpleDateFormat("yyyy-MM-dd").parse(fromDate);
             Date to = new SimpleDateFormat("yyyy-MM-dd").parse(toDate);
             if(!from.before(to)) throw new RuntimeException("invalid Date interval");
-            Pageable p = org.springframework.data.domain.PageRequest.of(pageRequest.getPageNumber(),pageRequest.getPageSize(),Sort.by("created_at").descending());
+            Pageable p = PageRequest.of(pageRequest.getPageNumber(),pageRequest.getPageSize(),Sort.by("created_at").descending());
             Page<Transactions> transactionsPage = transactionRepo.findAllByTransactionTimeBetween(from, to,p);
             return getTransactionPageableResponse(transactionsPage);
         }catch (Exception e){
@@ -112,7 +113,7 @@ private final ModelMapper modelMapper;
     }
 
     @Override
-    public PageableResponse ownTransactions(PageRequest pageRequest,String filter) {
+    public PageableResponse ownTransactions(PageRequestObj pageRequest, String filter) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserDto user = userService.userByEmail(authentication.getName());
         Pageable p = org.springframework.data.domain.PageRequest.of(pageRequest.getPageNumber(),pageRequest.getPageSize(), Sort.by("created_at").descending());
