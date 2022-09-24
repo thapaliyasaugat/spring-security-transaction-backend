@@ -28,13 +28,13 @@ public class TransactionController {
 
     @PostMapping("/code")
     public ResponseEntity<?> transactionByCode(@RequestBody TransactionByCode transactionByCode) {
-        PageableResponse transactionDto = transactionService.transactionsByCode(transactionByCode);
+        ApiResponse<PageableResponse> transactionDto = transactionService.transactionsByCode(transactionByCode);
         return new ResponseEntity<>(transactionDto, HttpStatus.OK);
     }
 
     @PostMapping("/list")
     public ResponseEntity<?> allTransactions(@RequestBody PageRequestObj pageRequest) {
-        PageableResponse transactionDtos = transactionService.allTransactions(pageRequest);
+        ApiResponse<PageableResponse> transactionDtos = transactionService.allTransactions(pageRequest);
         return new ResponseEntity<>(transactionDtos, HttpStatus.OK);
     }
 
@@ -44,13 +44,13 @@ public class TransactionController {
                                                    @RequestBody PageRequestObj pageRequest) {
         log.info("from date : {}",fromDate);
         log.info("to date : {}",toDate);
-        PageableResponse transactionDtos = transactionService.transactionByInterval(fromDate,toDate,pageRequest);
+        ApiResponse<PageableResponse> transactionDtos = transactionService.transactionByInterval(fromDate,toDate,pageRequest);
         return new ResponseEntity<>(transactionDtos, HttpStatus.OK);
     }
 
     @PostMapping("/my_transactions")
     public ResponseEntity<?> myTransactions(@RequestBody PageRequestObj pageRequest, @RequestParam("filter") String filter) {
-        PageableResponse transactions = transactionService.ownTransactions(pageRequest,filter);
+        ApiResponse<PageableResponse> transactions = transactionService.ownTransactions(pageRequest,filter);
         return new ResponseEntity<>(transactions, HttpStatus.OK);
     }
 }

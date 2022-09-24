@@ -4,10 +4,7 @@ import com.securitytest.securitytest.exceptions.ResourceNotFoundException;
 import com.securitytest.securitytest.models.Role;
 import com.securitytest.securitytest.models.RoleName;
 import com.securitytest.securitytest.models.User;
-import com.securitytest.securitytest.resource.RoleDto;
-import com.securitytest.securitytest.resource.UpdateRoleRequest;
-import com.securitytest.securitytest.resource.UserDto;
-import com.securitytest.securitytest.resource.UserStatus;
+import com.securitytest.securitytest.resource.*;
 import com.securitytest.securitytest.service.RoleService;
 import com.securitytest.securitytest.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,6 +15,7 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
 import org.modelmapper.ModelMapper;
 
+import java.util.Collections;
 import java.util.HashSet;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -52,23 +50,34 @@ class AdminServiceImplTest {
     @Test
     void updateRole() {
         UserDto userDto = modelMapper.map(user, UserDto.class);
+        RoleDto roleDto = modelMapper.map(role,RoleDto.class);
         UpdateRoleRequest updateRoleRequest = UpdateRoleRequest.builder().updateRoleOfEmail("saugat@email.com")
                 .roleName("TRANSACTIONS").build();
         Role adminRole =new Role(1, RoleName.ADMIN);
         when(userService.userByEmail(anyString())).thenReturn(userDto);
         RoleDto adminRoleDto = modelMapper.map(adminRole, RoleDto.class);
         when(roleService.findByName(anyString())).thenReturn(adminRoleDto);
+        when(roleService.getUserRoles(anyString())).thenReturn(new ApiResponse<>(Collections.singletonList(roleDto),"",0));
+        ApiResponse<UserDto> returnedUser = adminServiceImpl.updateRole(updateRoleRequest);
 
-        UserDto returnedUser = adminServiceImpl.updateRole(updateRoleRequest);
-
-        assertNotNull(returnedUser);
+        assertNotNull(returnedUser.getData());
     }
     @Test
-    void when_invalid_updateRoleRequest_throw_resourceNotFoundException(){
+    void when_null_updateRoleRequest_throw_resourceException(){
         assertThrows(ResourceNotFoundException.class,()->{
             UpdateRoleRequest updateRoleRequest = UpdateRoleRequest.builder().updateRoleOfEmail("saugat@email.com")
                     .roleName("TRANSACTIONS").build();
             when(userService.userByEmail(anyString())).thenReturn(null);
+            adminServiceImpl.updateRole(updateRoleRequest);
+        });
+    }
+    @Test
+    void when_invalid_updateRoleRequest_throw_runtimeException(){
+        UserDto userDto = modelMapper.map(user, UserDto.class);
+        assertThrows(RuntimeException.class,()->{
+            UpdateRoleRequest updateRoleRequest = UpdateRoleRequest.builder().updateRoleOfEmail("saugat@email.com")
+                    .roleName("TRANSACT").build();
+            when(userService.userByEmail(anyString())).thenReturn(userDto);
             adminServiceImpl.updateRole(updateRoleRequest);
         });
     }

@@ -5,13 +5,13 @@ import com.securitytest.securitytest.resource.*;
 
 
 public interface UserService {
-    UserDto userById(int id);
-    UserPageableResponse allUsers(PageRequestObj pageRequest);
-    UserDto blockUser(int id);
-    UserDto activateUser(int id);
+    ApiResponse<UserDto> userById(int id);
+    ApiResponse<UserPageableResponse> allUsers(PageRequestObj pageRequest);
+    ApiResponse<UserDto> blockUser(int id);
+    ApiResponse<UserDto> activateUser(int id);
     UserDto userByEmail(String email);
     UserDto save(User user);
     UserDto updateUser(UserDto userDto);
     void addUserRole(RoleDto roleDto,int id);
-    UserDto getMyDetail();
+    ApiResponse<UserDto> getMyDetail();
 }

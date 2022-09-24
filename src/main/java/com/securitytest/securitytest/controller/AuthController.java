@@ -27,7 +27,7 @@ public class AuthController {
     }
 
     @PostMapping("/signin")
-    public JwtAuthResponse signInUser(@Valid @RequestBody LoginRequest loginRequest){
+    public ApiResponse<JwtAuthResponse> signInUser(@Valid @RequestBody LoginRequest loginRequest){
         return authService.signInUser(loginRequest);
     }
 }

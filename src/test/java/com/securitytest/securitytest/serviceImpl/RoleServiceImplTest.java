@@ -4,6 +4,7 @@ import com.securitytest.securitytest.models.Role;
 import com.securitytest.securitytest.models.RoleName;
 import com.securitytest.securitytest.models.User;
 import com.securitytest.securitytest.repositories.RoleRepo;
+import com.securitytest.securitytest.resource.ApiResponse;
 import com.securitytest.securitytest.resource.RoleDto;
 import com.securitytest.securitytest.resource.UserDto;
 import com.securitytest.securitytest.resource.UserStatus;
@@ -56,10 +57,10 @@ class RoleServiceImplTest {
         Role adminRole =  new Role(1, RoleName.ADMIN);
         List<Role> roleList = Arrays.asList(adminRole,role);
         when(roleRepo.roleOfUser(anyInt())).thenReturn(roleList);
-        List<RoleDto> returnedRoleOfUser = roleServiceImpl.roleOfUser(1);
-        assertEquals(returnedRoleOfUser.size(),2);
-        assertEquals(returnedRoleOfUser.get(0).getName(),RoleName.ADMIN);
-        assertEquals(returnedRoleOfUser.get(1).getName(),RoleName.CUSTOMER);
+        ApiResponse<List<RoleDto>> returnedRoleOfUser = roleServiceImpl.roleOfUser(1);
+        assertEquals(returnedRoleOfUser.getData().size(),2);
+        assertEquals(returnedRoleOfUser.getData().get(0).getName(),RoleName.ADMIN);
+        assertEquals(returnedRoleOfUser.getData().get(1).getName(),RoleName.CUSTOMER);
     }
 
     @Test
@@ -78,9 +79,9 @@ class RoleServiceImplTest {
         when(userService.userByEmail(anyString())).thenReturn(userDto);
         when(roleRepo.roleOfUser(anyInt())).thenReturn(roleList);
 
-        List<RoleDto> roleDtoList = roleServiceImpl.getUserRoles("saugat@email.com");
-        assertEquals(roleDtoList.size(),2);
-        assertEquals(roleDtoList.get(0).getName(),RoleName.ADMIN);
-        assertNotNull(roleDtoList);
+        ApiResponse<List<RoleDto>> roleDtoList = roleServiceImpl.getUserRoles("saugat@email.com");
+        assertEquals(roleDtoList.getData().size(),2);
+        assertEquals(roleDtoList.getData().get(0).getName(),RoleName.ADMIN);
+        assertNotNull(roleDtoList.getData());
     }
 }

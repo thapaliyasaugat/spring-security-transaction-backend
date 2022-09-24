@@ -2,6 +2,8 @@ package com.securitytest.securitytest.exceptions;
 
 
 import com.securitytest.securitytest.resource.ApiResponse;
+import io.jsonwebtoken.JwtException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -15,10 +17,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestControllerAdvice
+@Slf4j
 public class GlobalExceptionHandler {
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<?> resourceNotFound(ResourceNotFoundException ex){
-        ApiResponse response = new ApiResponse();
+        ApiResponse<String> response = new ApiResponse<>();
         response.setStatus(1);
         response.setMessage(ex.getMessage());
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
@@ -35,24 +38,30 @@ public class GlobalExceptionHandler {
     }
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<?> runTimeException(RuntimeException ex){
-        ApiResponse response = new ApiResponse();
+        ApiResponse<String> response = new ApiResponse<>();
         response.setStatus(1);
         response.setMessage(ex.getMessage());
         return new ResponseEntity<>(response,HttpStatus.BAD_REQUEST);
     }
     @ExceptionHandler(SQLIntegrityConstraintViolationException.class)
     public ResponseEntity<?> sqlIntegrityConstraintViolationException(SQLIntegrityConstraintViolationException sq){
-        ApiResponse response = new ApiResponse();
+        log.error(sq.getMessage());
+        ApiResponse<String> response = new ApiResponse<>();
         response.setStatus(1);
-        response.setMessage(sq.getLocalizedMessage());
+        response.setMessage("Duplicate Entry or some other SQL violations.");
         return new ResponseEntity<>(response,HttpStatus.BAD_REQUEST);
     }
-
     @ExceptionHandler(UnexpectedTypeException.class)
     public ResponseEntity<?> sqlIntegrityConstraintViolationException(UnexpectedTypeException ex){
-        ApiResponse response = new ApiResponse();
+        log.error(ex.getMessage());
+        ApiResponse<String> response = new ApiResponse<>();
         response.setStatus(1);
-        response.setMessage(ex.getLocalizedMessage());
+        response.setMessage("Unexpected type, check all constraints.");
         return new ResponseEntity<>(response,HttpStatus.BAD_REQUEST);
+    }
+    @ExceptionHandler(JwtException.class)
+    public ResponseEntity<?> jwtException(JwtException ex){
+        log.error("jwt exception : {}",ex.getMessage());
+        return new ResponseEntity<>(new ApiResponse<String>(null,"Invalid Request.",1),HttpStatus.BAD_REQUEST);
     }
 }

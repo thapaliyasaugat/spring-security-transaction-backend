@@ -6,7 +6,10 @@ import com.securitytest.securitytest.resource.*;
 import com.securitytest.securitytest.repositories.TransactionRepo;
 import com.securitytest.securitytest.service.TransactionService;
 import com.securitytest.securitytest.service.UserService;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -22,6 +25,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j
+@CacheConfig(cacheNames = {"transaction"})
 public class TransactionServiceImpl implements TransactionService {
 private final TransactionRepo transactionRepo;
 private final UserService userService;
@@ -47,7 +52,7 @@ private final ModelMapper modelMapper;
         transactions.setCustomer_to(modelMapper.map(toUser, User.class));
         updateBalance(transactionRequest,fromUser,toUser);
         transactionRepo.save(transactions);
-        ApiResponse response = new ApiResponse();
+        ApiResponse<String> response = new ApiResponse<>();
         response.setStatus(0);
         response.setMessage("transaction successful.");
         return response;
@@ -73,7 +78,7 @@ private final ModelMapper modelMapper;
     }
 
     @Override
-    public PageableResponse transactionsByCode(TransactionByCode transactionByCode) {
+    public ApiResponse<PageableResponse> transactionsByCode(TransactionByCode transactionByCode) {
         Pageable p = org.springframework.data.domain.PageRequest.of(0, 8);
         Page<Transactions> transactions = transactionRepo.findByCode(transactionByCode.getCode(), p);
         return getTransactionPageableResponse(transactions);
@@ -81,13 +86,15 @@ private final ModelMapper modelMapper;
 
 
     @Override
-    public PageableResponse allTransactions(PageRequestObj pageRequest) {
+    @Cacheable()
+    public ApiResponse<PageableResponse> allTransactions(PageRequestObj pageRequest) {
+        log.info("Request received for all transaction.");
         Pageable p = org.springframework.data.domain.PageRequest.of(pageRequest.getPageNumber(), pageRequest.getPageSize(),Sort.by("createdAt").descending());
         Page<Transactions> listOfTransactions = transactionRepo.findAll(p);
         return getTransactionPageableResponse(listOfTransactions);
     }
 
-    private PageableResponse getTransactionPageableResponse(Page<Transactions> listOfTransactions) {
+    private ApiResponse<PageableResponse> getTransactionPageableResponse(Page<Transactions> listOfTransactions) {
         List<TransactionDto> transactionDtos = listOfTransactions.getContent().stream().map(t->modelMapper.map(t, TransactionDto.class)).collect(Collectors.toList());
         PageableResponse response = new PageableResponse();
         response.setContent(transactionDtos);
@@ -95,11 +102,11 @@ private final ModelMapper modelMapper;
         response.setPageSize(listOfTransactions.getSize());
         response.setTotalNoOfPages(listOfTransactions.getTotalPages());
         response.setTotalNoOfElements(listOfTransactions.getTotalElements());
-        return response;
+        return new ApiResponse<>(response,"pageable response",0);
     }
 
     @Override
-    public PageableResponse transactionByInterval(String fromDate , String toDate , PageRequestObj pageRequest) {
+    public ApiResponse<PageableResponse> transactionByInterval(String fromDate , String toDate , PageRequestObj pageRequest) {
         try {
             Date from = new SimpleDateFormat("yyyy-MM-dd").parse(fromDate);
             Date to = new SimpleDateFormat("yyyy-MM-dd").parse(toDate);
@@ -113,7 +120,7 @@ private final ModelMapper modelMapper;
     }
 
     @Override
-    public PageableResponse ownTransactions(PageRequestObj pageRequest, String filter) {
+    public ApiResponse<PageableResponse> ownTransactions(PageRequestObj pageRequest, String filter) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserDto user = userService.userByEmail(authentication.getName());
         Pageable p = org.springframework.data.domain.PageRequest.of(pageRequest.getPageNumber(),pageRequest.getPageSize(), Sort.by("created_at").descending());

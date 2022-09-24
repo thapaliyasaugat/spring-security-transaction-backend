@@ -1,6 +1,5 @@
 package com.securitytest.securitytest.serviceImpl;
 
-import com.securitytest.securitytest.configuration.UserPrincipal;
 import com.securitytest.securitytest.models.Role;
 import com.securitytest.securitytest.models.RoleName;
 import com.securitytest.securitytest.models.User;
@@ -16,7 +15,6 @@ import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -54,10 +52,10 @@ class UserServiceImplTest {
     @Test
     void userById() {
         when(userRepo.findById(anyInt())).thenReturn(Optional.ofNullable(user));
-        UserDto saved = userServiceImpl.userById(1);
-        assertEquals(saved.getBalance(), user.getBalance());
-        assertNotEquals(saved.getUserName(), "saugat");
-        assertNotNull(saved);
+        ApiResponse<UserDto> saved = userServiceImpl.userById(1);
+        assertEquals(saved.getData().getBalance(), user.getBalance());
+        assertNotEquals(saved.getData().getUserName(), "saugat");
+        assertNotNull(saved.getData());
     }
 
     @Test
@@ -82,13 +80,13 @@ class UserServiceImplTest {
         Page<User> userPage = new PageImpl<>(userList);
 
         when(userRepo.findAll(any(Pageable.class))).thenReturn(userPage);
-        UserPageableResponse response = userServiceImpl.allUsers(pageRequest);
+        ApiResponse<UserPageableResponse> response = userServiceImpl.allUsers(pageRequest);
 
-        assertEquals(response.getPageNumber(), 0);
-        assertEquals(response.getPageSize(), 3);
-        assertEquals(response.getTotalNoOfElements(), 3);
-        assertEquals(response.getContent().get(0).getUserName(), "Saugat");
-        assertEquals(response.getTotalNoOfPages(), 1);
+        assertEquals(response.getData().getPageNumber(), 0);
+        assertEquals(response.getData().getPageSize(), 3);
+        assertEquals(response.getData().getTotalNoOfElements(), 3);
+        assertEquals(response.getData().getContent().get(0).getUserName(), "Saugat");
+        assertEquals(response.getData().getTotalNoOfPages(), 1);
     }
 
     @Test
@@ -101,11 +99,11 @@ class UserServiceImplTest {
                 }}).build();
         when(userRepo.findById(anyInt())).thenReturn(Optional.ofNullable(user));
         when(userRepo.save(any(User.class))).thenReturn(updatedUser);
-        UserDto blockedUser = userServiceImpl.blockUser(1);
+        ApiResponse<UserDto> blockedUser = userServiceImpl.blockUser(1);
 //throw run time exception wwhrn already Blocked
 //        assertThrows(RuntimeException.class,()->());
-        assertNotNull(blockedUser);
-        assertEquals(blockedUser.getStatus(),UserStatus.BLOCKED);
+        assertNotNull(blockedUser.getData());
+        assertEquals(blockedUser.getData().getStatus(),UserStatus.BLOCKED);
     }
 
     @Test
@@ -118,10 +116,10 @@ class UserServiceImplTest {
                 }}).build();
         when(userRepo.findById(anyInt())).thenReturn(Optional.ofNullable(testUser));
         when(userRepo.save(any(User.class))).thenReturn(user);
-        UserDto activatedUser = userServiceImpl.activateUser(1);
+        ApiResponse<UserDto> activatedUser = userServiceImpl.activateUser(1);
 
-        assertNotNull(activatedUser);
-        assertEquals(activatedUser.getStatus(),UserStatus.ACTIVE);
+        assertNotNull(activatedUser.getData());
+        assertEquals(activatedUser.getData().getStatus(),UserStatus.ACTIVE);
     }
 
     @Test
@@ -202,7 +200,7 @@ class UserServiceImplTest {
 //                        .collect(Collectors.toList());
 //        System.out.println(authorities);
 
-        UserDto userDto = userServiceImpl.getMyDetail();
-        System.out.println(userDto);
+        ApiResponse<UserDto> userDto = userServiceImpl.getMyDetail();
+        System.out.println(userDto.getData());
     }
 }

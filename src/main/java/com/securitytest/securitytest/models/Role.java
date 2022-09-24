@@ -6,9 +6,10 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.Set;
 
 @Entity
-@Table(name = "roles",uniqueConstraints = @UniqueConstraint(columnNames = {"name"}))
+@Table(name = "roles", uniqueConstraints = @UniqueConstraint(columnNames = {"name"}))
 @Getter
 @Setter
 @NoArgsConstructor
@@ -20,4 +21,7 @@ public class Role {
     @Column(unique = true)
     @Enumerated(EnumType.STRING)
     private RoleName name;
+
+    @ManyToMany(mappedBy = "eligibleRoles")
+    private Set<CashbackScheme> attainableCashback;
 }

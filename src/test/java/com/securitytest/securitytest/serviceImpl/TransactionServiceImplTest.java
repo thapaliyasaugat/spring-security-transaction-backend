@@ -77,12 +77,12 @@ class TransactionServiceImplTest {
         TransactionByCode transactionByCode = TransactionByCode.builder().code("fakeCode1").build();
         Page<Transactions> transactions = new PageImpl<>(Arrays.asList(sampleTransaction));
         when(transactionRepo.findByCode(anyString(), any(Pageable.class))).thenReturn(transactions);
-        PageableResponse response = transactionServiceImpl.transactionsByCode(transactionByCode);
-        assertEquals(response.getPageSize(),1);
-        assertEquals(response.getPageNumber(),0);
-        assertEquals(response.getTotalNoOfPages(),1);
-        assertEquals(response.getTotalNoOfElements(),1);
-        assertNotNull(response);
+        ApiResponse<PageableResponse> response = transactionServiceImpl.transactionsByCode(transactionByCode);
+        assertEquals(response.getData().getPageSize(),1);
+        assertEquals(response.getData().getPageNumber(),0);
+        assertEquals(response.getData().getTotalNoOfPages(),1);
+        assertEquals(response.getData().getTotalNoOfElements(),1);
+        assertNotNull(response.getData());
 
     }
 
@@ -95,12 +95,12 @@ class TransactionServiceImplTest {
         Page<Transactions> transactions = new PageImpl<>(Arrays.asList(sampleTransaction,firstTransaction,secondTransaction));
         when(transactionRepo.findAll(any(Pageable.class))).thenReturn(transactions);
         PageRequestObj pageRequest = PageRequestObj.builder().pageNumber(0).pageSize(3).build();
-        PageableResponse response = transactionServiceImpl.allTransactions(pageRequest);
-        assertEquals(response.getPageNumber(),0);
-        assertEquals(response.getPageSize(),3);
-        assertEquals(response.getTotalNoOfPages(),1);
-        assertEquals(response.getTotalNoOfElements(),3);
-        assertEquals(response.getContent().size(),3);
+        ApiResponse<PageableResponse> response = transactionServiceImpl.allTransactions(pageRequest);
+        assertEquals(response.getData().getPageNumber(),0);
+        assertEquals(response.getData().getPageSize(),3);
+        assertEquals(response.getData().getTotalNoOfPages(),1);
+        assertEquals(response.getData().getTotalNoOfElements(),3);
+        assertEquals(response.getData().getContent().size(),3);
         assertNotNull(response);
     }
 
@@ -116,12 +116,12 @@ class TransactionServiceImplTest {
         PageRequestObj pageRequestObj = PageRequestObj.builder().pageNumber(0).pageSize(3).build();
         Page<Transactions> transactions = new PageImpl<>(Arrays.asList(sampleTransaction,firstTransaction,secondTransaction));
         when(transactionRepo.findAllByTransactionTimeBetween(any(Date.class),any(Date.class),any(Pageable.class))).thenReturn(transactions);
-        PageableResponse response = transactionServiceImpl.transactionByInterval("2022-10-12","2022-11-13",pageRequestObj);
-        assertEquals(response.getPageNumber(),0);
-        assertEquals(response.getPageSize(),3);
-        assertEquals(response.getTotalNoOfPages(),1);
-        assertEquals(response.getTotalNoOfElements(),3);
-        assertEquals(response.getContent().size(),3);
+        ApiResponse<PageableResponse> response = transactionServiceImpl.transactionByInterval("2022-10-12","2022-11-13",pageRequestObj);
+        assertEquals(response.getData().getPageNumber(),0);
+        assertEquals(response.getData().getPageSize(),3);
+        assertEquals(response.getData().getTotalNoOfPages(),1);
+        assertEquals(response.getData().getTotalNoOfElements(),3);
+        assertEquals(response.getData().getContent().size(),3);
         assertNotNull(response);
     }
 }

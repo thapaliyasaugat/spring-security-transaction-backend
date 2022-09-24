@@ -8,6 +8,6 @@ import org.springframework.stereotype.Service;
 
 @Service
 public interface AuthService {
-    JwtAuthResponse signInUser(LoginRequest loginRequest);
+    ApiResponse<JwtAuthResponse> signInUser(LoginRequest loginRequest);
     ApiResponse signUpUser(SignUpRequest signUpRequest);
 }

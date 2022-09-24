@@ -6,6 +6,7 @@ import com.securitytest.securitytest.models.User;
 import com.securitytest.securitytest.resource.*;
 import com.securitytest.securitytest.repositories.UserRepo;
 import com.securitytest.securitytest.service.UserService;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -16,6 +17,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 public class UserServiceImpl implements UserService {
     private final UserRepo userRepo;
     private final ModelMapper modelMapper;
@@ -26,13 +28,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDto userById(int id) {
+    public ApiResponse<UserDto> userById(int id) {
         User user = userRepo.findById(id).orElseThrow(()->new ResourceNotFoundException("user","id",String.valueOf(id)));
-        return modelMapper.map(user,UserDto.class);
+        return new ApiResponse<>(modelMapper.map(user,UserDto.class),"user with id ".concat(String.valueOf(id)),0);
     }
 
     @Override
-    public UserPageableResponse allUsers(PageRequestObj pageRequest) {
+    public ApiResponse<UserPageableResponse> allUsers(PageRequestObj pageRequest) {
         Pageable p = org.springframework.data.domain.PageRequest.of(pageRequest.getPageNumber(),pageRequest.getPageSize());
         Page<User> users = userRepo.findAll(p);
         List<UserDto> userDtos = users.getContent().stream().map(u->modelMapper.map(u, UserDto.class)).collect(Collectors.toList());
@@ -42,25 +44,27 @@ public class UserServiceImpl implements UserService {
         response.setPageSize(users.getSize());
         response.setTotalNoOfPages(users.getTotalPages());
         response.setTotalNoOfElements(users.getTotalElements());
-        return response;
+        return new ApiResponse<>(response,"pageable response of user data.",0);
     }
 
     @Override
-    public UserDto blockUser(int id) {
+    public ApiResponse<UserDto> blockUser(int id) {
         User user = userRepo.findById(id).orElseThrow(()->new ResourceNotFoundException("user","id",String.valueOf(id)));
+        log.info("Request to block user {}",user.getEmail());
         if(user.getStatus().equals(UserStatus.BLOCKED)) throw new RuntimeException("User Already Blocked.");
         user.setStatus(UserStatus.BLOCKED);
         User blockedUser = userRepo.save(user);
-        return modelMapper.map(blockedUser,UserDto.class);
+        return new ApiResponse<>(modelMapper.map(blockedUser,UserDto.class),"",0);
     }
 
     @Override
-    public UserDto activateUser(int id) {
+    public ApiResponse<UserDto> activateUser(int id) {
         User user = userRepo.findById(id).orElseThrow(()->new ResourceNotFoundException("user","id",String.valueOf(id)));
+        log.info("Request to activate user {}",user.getEmail());
         if(user.getStatus().equals(UserStatus.ACTIVE)) throw new RuntimeException("User Already Active.");
         user.setStatus(UserStatus.ACTIVE);
         User activatedUser = userRepo.save(user);
-        return modelMapper.map(activatedUser,UserDto.class);
+        return new ApiResponse<>(modelMapper.map(activatedUser,UserDto.class),"activated: ".concat(user.getEmail()),0);
     }
 
     @Override
@@ -99,9 +103,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDto getMyDetail() {
+    public ApiResponse<UserDto> getMyDetail() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        return userByEmail(authentication.getName());
+        return new ApiResponse<>(userByEmail(authentication.getName()),"detail of: ".concat(authentication.getName()),0);
     }
 
 }

@@ -66,18 +66,18 @@ class AuthServiceImplTest {
     @Test
     void signInUser() {
         LoginRequest loginRequest= LoginRequest.builder().email("saugat@email.com").password("saugat22").build();
-        UserPrincipal userPrincipal = UserPrincipal.builder().id(1).userName("Saugat Thapaliya").email("saugat@email.com")
-                .password("fakefakefakefakefakefake").build();
+//        UserPrincipal userPrincipal = UserPrincipal.builder().id(1).userName("Saugat Thapaliya").email("saugat@email.com")
+//                .password("fakefakefakefakefakefake").build();
         Authentication authentication = mock(Authentication.class);
         Mockito.when(authenticationManager.authenticate(Mockito.any())).thenReturn(authentication);
         SecurityContext securityContext = mock(SecurityContext.class);
         when(securityContext.getAuthentication()).thenReturn(authentication);
         SecurityContextHolder.setContext(securityContext);
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        JwtAuthResponse response = authServiceImpl.signInUser(loginRequest);
+        ApiResponse<JwtAuthResponse> response = authServiceImpl.signInUser(loginRequest);
 
-        assertNotNull(response);
-        assertEquals(response.getUserName(),"saugat@email.com");
+        assertNotNull(response.getData());
+        assertEquals(response.getData().getUserName(),"saugat@email.com");
     }
 
     @Test

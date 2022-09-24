@@ -2,12 +2,14 @@ package com.securitytest.securitytest.resource;
 
 import lombok.*;
 
+import java.io.Serializable;
+
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class UserDto {
+public class UserDto implements Serializable {
     private int id;
     private String userName;
     private String email;

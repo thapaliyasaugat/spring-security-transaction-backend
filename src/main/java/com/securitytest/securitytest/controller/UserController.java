@@ -1,5 +1,6 @@
 package com.securitytest.securitytest.controller;
 
+import com.securitytest.securitytest.resource.ApiResponse;
 import com.securitytest.securitytest.resource.PageRequestObj;
 import com.securitytest.securitytest.resource.UserDto;
 import com.securitytest.securitytest.resource.UserPageableResponse;
@@ -19,11 +20,11 @@ public class UserController {
 
     @PostMapping("/")
     public ResponseEntity<?> getAllUsers(@RequestBody PageRequestObj pageRequest){
-        UserPageableResponse userList = userService.allUsers(pageRequest);
+        ApiResponse<UserPageableResponse> userList = userService.allUsers(pageRequest);
         return new ResponseEntity<>(userList, HttpStatus.OK);
     }
     @GetMapping("/{id}")
-    public UserDto getUserById(@PathVariable int id){
+    public ApiResponse<UserDto> getUserById(@PathVariable int id){
         return userService.userById(id);
     }
     @GetMapping("/email/{email}")
@@ -32,7 +33,7 @@ public class UserController {
         return userService.userByEmail(email);
     }
     @GetMapping("/me/detail")
-    public UserDto ownDetail(){
+    public ApiResponse<UserDto> ownDetail(){
         return userService.getMyDetail();
     }
 }

@@ -4,9 +4,9 @@ import com.securitytest.securitytest.resource.*;
 
 public interface TransactionService {
     ApiResponse makeTransaction(TransactionRequest transactionRequest);
-    PageableResponse transactionsByCode(TransactionByCode transactionByCode);
-    PageableResponse allTransactions(PageRequestObj pageRequest);
-    PageableResponse transactionByInterval(String fromDate, String toDate, PageRequestObj pageRequest);
-    PageableResponse ownTransactions(PageRequestObj pageRequest, String filter);
+    ApiResponse<PageableResponse> transactionsByCode(TransactionByCode transactionByCode);
+    ApiResponse<PageableResponse> allTransactions(PageRequestObj pageRequest);
+    ApiResponse<PageableResponse> transactionByInterval(String fromDate, String toDate, PageRequestObj pageRequest);
+    ApiResponse<PageableResponse> ownTransactions(PageRequestObj pageRequest, String filter);
 
 }

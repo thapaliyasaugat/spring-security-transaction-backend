@@ -3,10 +3,13 @@ package com.securitytest.securitytest.serviceImpl;
 import com.securitytest.securitytest.models.Role;
 import com.securitytest.securitytest.models.RoleName;
 import com.securitytest.securitytest.repositories.RoleRepo;
+import com.securitytest.securitytest.resource.ApiResponse;
 import com.securitytest.securitytest.resource.RoleDto;
 import com.securitytest.securitytest.resource.UserDto;
 import com.securitytest.securitytest.service.RoleService;
 import com.securitytest.securitytest.service.UserService;
+import lombok.extern.slf4j.Slf4j;
+import org.hibernate.tool.schema.ast.SqlScriptParserException;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +17,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 public class RoleServiceImpl implements RoleService {
 
     private final RoleRepo roleRepo;
@@ -27,20 +31,33 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
-    public List<RoleDto> roleOfUser(int id) {
+    public ApiResponse<List<RoleDto>> roleOfUser(int id) {
         List<Role> roles = roleRepo.roleOfUser(id);
-        return roles.stream().map(role ->modelMapper.map(role, RoleDto.class)).collect(Collectors.toList());
+        return new ApiResponse<>(
+                roles.stream().map(role ->modelMapper.map(role, RoleDto.class)).collect(Collectors.toList()),
+                "roles of user ".concat(String.valueOf(id)),
+                0
+        );
     }
 
     @Override
     public RoleDto findByName(String name) {
-        Role  role= roleRepo.findByName(RoleName.valueOf(name));
-        return modelMapper.map(role,RoleDto.class);
+        try {
+            Role role = roleRepo.findByName(RoleName.valueOf(name));
+            return modelMapper.map(role, RoleDto.class);
+        }catch (Exception e){
+            log.error("error finding role by name {}",e.getMessage());
+            throw new RuntimeException("No such Roles Defined.");
+        }
     }
     @Override
-    public List<RoleDto> getUserRoles(String email) {
+    public ApiResponse<List<RoleDto>> getUserRoles(String email) {
         UserDto user = userService.userByEmail(email);
         List<Role> roles = roleRepo.roleOfUser(user.getId());
-        return roles.stream().map(role->modelMapper.map(role,RoleDto.class)).collect(Collectors.toList());
+        return new ApiResponse<>(
+                roles.stream().map(role->modelMapper.map(role,RoleDto.class)).collect(Collectors.toList()),
+                "roles of user ".concat(user.getUserName()),
+                0
+        );
     }
 }

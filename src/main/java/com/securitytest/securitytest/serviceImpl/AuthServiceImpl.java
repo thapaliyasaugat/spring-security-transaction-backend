@@ -8,6 +8,7 @@ import com.securitytest.securitytest.resource.*;
 import com.securitytest.securitytest.service.AuthService;
 import com.securitytest.securitytest.service.RoleService;
 import com.securitytest.securitytest.service.UserService;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -20,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.HashSet;
 import java.util.Set;
 
+@Slf4j
 @Service(value = "userAuthService")
 public class AuthServiceImpl implements AuthService {
     private final RoleService roleService;
@@ -39,7 +41,8 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public JwtAuthResponse signInUser(LoginRequest loginRequest) {
+    public ApiResponse<JwtAuthResponse> signInUser(LoginRequest loginRequest) {
+        log.info("Login attempt from {}",loginRequest.getEmail());
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         loginRequest.getEmail(),
@@ -53,7 +56,7 @@ public class AuthServiceImpl implements AuthService {
         JwtAuthResponse jwtAuthResponse = new JwtAuthResponse();
         jwtAuthResponse.setToken(jwt);
         jwtAuthResponse.setUserName(authentication.getName());
-        return jwtAuthResponse;
+        return new ApiResponse<>(jwtAuthResponse,"Signed in successfully.",0);
     }
 
     @Override

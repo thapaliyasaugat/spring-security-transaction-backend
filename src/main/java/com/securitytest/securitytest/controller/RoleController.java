@@ -1,5 +1,6 @@
 package com.securitytest.securitytest.controller;
 
+import com.securitytest.securitytest.resource.ApiResponse;
 import com.securitytest.securitytest.resource.RoleDto;
 import com.securitytest.securitytest.service.RoleService;
 import org.springframework.http.HttpStatus;
@@ -19,7 +20,7 @@ public class RoleController {
 
     @GetMapping("/{id}")
     public ResponseEntity<?> roleOfUser(@PathVariable int id){
-        List<RoleDto> roles = roleService.roleOfUser(id);
+        ApiResponse<List<RoleDto>> roles = roleService.roleOfUser(id);
         return new ResponseEntity<>(roles, HttpStatus.OK);
     }
 }
