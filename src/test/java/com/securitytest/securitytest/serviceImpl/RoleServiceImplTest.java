@@ -1,5 +1,6 @@
 package com.securitytest.securitytest.serviceImpl;
 
+import com.securitytest.securitytest.models.CashbackScheme;
 import com.securitytest.securitytest.models.Role;
 import com.securitytest.securitytest.models.RoleName;
 import com.securitytest.securitytest.models.User;
@@ -20,6 +21,7 @@ import org.modelmapper.ModelMapper;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
@@ -41,9 +43,9 @@ class RoleServiceImplTest {
     private Role role;
 
     @BeforeEach
-    void setUp(){
+    void setUp() {
         MockitoAnnotations.openMocks(this);
-        role = new Role(2, RoleName.CUSTOMER);
+        role = new Role(2, RoleName.CUSTOMER, null);
         user = User.builder().id(1).userName("Saugat").email("saugat@email.com")
                 .password("passwordEncoder.encode(signUpRequest.getPassword())")
                 .balance(50000.00).status(UserStatus.ACTIVE)
@@ -54,34 +56,35 @@ class RoleServiceImplTest {
 
     @Test
     void roleOfUser() {
-        Role adminRole =  new Role(1, RoleName.ADMIN);
-        List<Role> roleList = Arrays.asList(adminRole,role);
+        Set<CashbackScheme> cashbackSchemes = new HashSet<>();
+        Role adminRole = new Role(1, RoleName.ADMIN, null);
+        List<Role> roleList = Arrays.asList(adminRole, role);
         when(roleRepo.roleOfUser(anyInt())).thenReturn(roleList);
         ApiResponse<List<RoleDto>> returnedRoleOfUser = roleServiceImpl.roleOfUser(1);
-        assertEquals(returnedRoleOfUser.getData().size(),2);
-        assertEquals(returnedRoleOfUser.getData().get(0).getName(),RoleName.ADMIN);
-        assertEquals(returnedRoleOfUser.getData().get(1).getName(),RoleName.CUSTOMER);
+        assertEquals(returnedRoleOfUser.getData().size(), 2);
+        assertEquals(returnedRoleOfUser.getData().get(0).getName(), RoleName.ADMIN);
+        assertEquals(returnedRoleOfUser.getData().get(1).getName(), RoleName.CUSTOMER);
     }
 
     @Test
     void findByName() {
         when(roleRepo.findByName(any(RoleName.class))).thenReturn(role);
         RoleDto roleDto = roleServiceImpl.findByName("CUSTOMER");
-        assertEquals(roleDto.getName(),RoleName.CUSTOMER);
+        assertEquals(roleDto.getName(), RoleName.CUSTOMER);
         assertNotNull(roleDto);
     }
 
     @Test
     void getUserRoles() {
-        Role adminRole =  new Role(1, RoleName.ADMIN);
-        List<Role> roleList = Arrays.asList(adminRole,role);
+        Role adminRole = new Role(1, RoleName.ADMIN, null);
+        List<Role> roleList = Arrays.asList(adminRole, role);
         UserDto userDto = modelMapper.map(user, UserDto.class);
         when(userService.userByEmail(anyString())).thenReturn(userDto);
         when(roleRepo.roleOfUser(anyInt())).thenReturn(roleList);
 
         ApiResponse<List<RoleDto>> roleDtoList = roleServiceImpl.getUserRoles("saugat@email.com");
-        assertEquals(roleDtoList.getData().size(),2);
-        assertEquals(roleDtoList.getData().get(0).getName(),RoleName.ADMIN);
+        assertEquals(roleDtoList.getData().size(), 2);
+        assertEquals(roleDtoList.getData().get(0).getName(), RoleName.ADMIN);
         assertNotNull(roleDtoList.getData());
     }
 }

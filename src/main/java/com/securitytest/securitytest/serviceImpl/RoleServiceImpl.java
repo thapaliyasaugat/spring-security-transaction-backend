@@ -60,4 +60,9 @@ public class RoleServiceImpl implements RoleService {
                 0
         );
     }
+
+    @Override
+    public List<Role> geAllRoles() {
+        return roleRepo.findAll();
+    }
 }

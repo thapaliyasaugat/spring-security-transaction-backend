@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -19,7 +20,7 @@ public class CashbackScheme extends DateAudit implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    private String Subject;
+    private String subject;
     private String description;
     private double rewardRate;
 
@@ -27,7 +28,7 @@ public class CashbackScheme extends DateAudit implements Serializable {
     @JoinTable(name = "cashback_eligible_roles",
             joinColumns = @JoinColumn(name = "cashback_scheme"),
             inverseJoinColumns = @JoinColumn(name = "eligible_role"))
-    private Set<Role> eligibleRoles;
+    private Set<Role> eligibleRoles = new HashSet<>();
 
     private boolean active;
     private String initiatedBy;//email-unique

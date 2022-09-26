@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -23,5 +24,5 @@ public class Role {
     private RoleName name;
 
     @ManyToMany(mappedBy = "eligibleRoles")
-    private Set<CashbackScheme> attainableCashback;
+    private Set<CashbackScheme> attainableCashback=new HashSet<>();
 }

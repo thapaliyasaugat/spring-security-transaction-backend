@@ -79,7 +79,7 @@ private final ModelMapper modelMapper;
 
     @Override
     public ApiResponse<PageableResponse> transactionsByCode(TransactionByCode transactionByCode) {
-        Pageable p = org.springframework.data.domain.PageRequest.of(0, 8);
+        Pageable p = PageRequest.of(0, 8);
         Page<Transactions> transactions = transactionRepo.findByCode(transactionByCode.getCode(), p);
         return getTransactionPageableResponse(transactions);
     }
@@ -89,7 +89,7 @@ private final ModelMapper modelMapper;
     @Cacheable()
     public ApiResponse<PageableResponse> allTransactions(PageRequestObj pageRequest) {
         log.info("Request received for all transaction.");
-        Pageable p = org.springframework.data.domain.PageRequest.of(pageRequest.getPageNumber(), pageRequest.getPageSize(),Sort.by("createdAt").descending());
+        Pageable p = PageRequest.of(pageRequest.getPageNumber(), pageRequest.getPageSize(),Sort.by("createdAt").descending());
         Page<Transactions> listOfTransactions = transactionRepo.findAll(p);
         return getTransactionPageableResponse(listOfTransactions);
     }

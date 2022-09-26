@@ -38,7 +38,7 @@ class AdminServiceImplTest {
     @BeforeEach
     void init(){
         MockitoAnnotations.openMocks(this);
-        role = new Role(2, RoleName.CUSTOMER);
+        role = new Role(2, RoleName.CUSTOMER,null);
         user = User.builder().id(1).userName("Saugat").email("saugat@email.com")
                 .password("passwordEncoder.encode(signUpRequest.getPassword())")
                 .balance(50000.00).status(UserStatus.ACTIVE)
@@ -53,7 +53,7 @@ class AdminServiceImplTest {
         RoleDto roleDto = modelMapper.map(role,RoleDto.class);
         UpdateRoleRequest updateRoleRequest = UpdateRoleRequest.builder().updateRoleOfEmail("saugat@email.com")
                 .roleName("TRANSACTIONS").build();
-        Role adminRole =new Role(1, RoleName.ADMIN);
+        Role adminRole =new Role(1, RoleName.ADMIN,null);
         when(userService.userByEmail(anyString())).thenReturn(userDto);
         RoleDto adminRoleDto = modelMapper.map(adminRole, RoleDto.class);
         when(roleService.findByName(anyString())).thenReturn(adminRoleDto);

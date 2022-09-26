@@ -64,4 +64,12 @@ public class GlobalExceptionHandler {
         log.error("jwt exception : {}",ex.getMessage());
         return new ResponseEntity<>(new ApiResponse<String>(null,"Invalid Request.",1),HttpStatus.BAD_REQUEST);
     }
+    @ExceptionHandler(NumberFormatException.class)
+    public ResponseEntity<?> numberFormatException(NumberFormatException ex){
+        log.error(ex.getMessage());
+        ApiResponse<String> response = new ApiResponse<>();
+        response.setStatus(1);
+        response.setMessage("Invalid Number format.");
+        return new ResponseEntity<>(response,HttpStatus.BAD_REQUEST);
+    }
 }

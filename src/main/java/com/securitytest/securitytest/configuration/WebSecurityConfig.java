@@ -21,30 +21,35 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final CustomUserDetailService customUserDetailService;
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
+
     public WebSecurityConfig(CustomUserDetailService customUserDetailService, JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint) {
         this.customUserDetailService = customUserDetailService;
         this.jwtAuthenticationEntryPoint = jwtAuthenticationEntryPoint;
     }
+
     @Override
     public void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(customUserDetailService).passwordEncoder(passwordEncoder());
     }
+
     @Bean
-    public PasswordEncoder passwordEncoder(){
+    public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.cors().and().csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/auth/signin","/auth/signup").permitAll()
+                .antMatchers("/auth/signin", "/auth/signup").permitAll()
 //                .antMatchers("/admin/**").hasAuthority(RoleName.ADMIN.name())
                 .antMatchers("/admin/update/role/").hasAuthority(RoleName.ADMIN.name())
                 .antMatchers("/admin/role/").hasAuthority(RoleName.ADMIN.name())
-                .antMatchers("/user/email","user/id").hasAnyAuthority(RoleName.TRANSACTION.name(),RoleName.ADMIN.name())
+                .antMatchers("/user/email", "user/id").hasAnyAuthority(RoleName.TRANSACTION.name(), RoleName.ADMIN.name())
                 .antMatchers("/user/").hasAuthority(RoleName.ADMIN.name())
-                .antMatchers("/transaction/list","/transaction/time/between").hasAnyAuthority(RoleName.TRANSACTION.name(),RoleName.ADMIN.name())
-                .antMatchers("/transaction/create/","/transaction/code/","transaction/my_transactions").hasAnyAuthority(RoleName.TRANSACTION.name(),RoleName.ADMIN.name(),RoleName.CUSTOMER.name())
+                .antMatchers("/transaction/list", "/transaction/time/between").hasAnyAuthority(RoleName.TRANSACTION.name(), RoleName.ADMIN.name())
+                .antMatchers("/transaction/create/", "/transaction/code/", "transaction/my_transactions").hasAnyAuthority(RoleName.TRANSACTION.name(), RoleName.ADMIN.name(), RoleName.CUSTOMER.name())
+                .antMatchers("/cashback/**").hasAnyAuthority(RoleName.ADMIN.name())
                 .anyRequest().authenticated()
                 .and()
                 .exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint).and()
@@ -52,13 +57,15 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
         http.addFilterBefore(authenticationTokenFilterBean(), UsernamePasswordAuthenticationFilter.class);
     }
+
     @Override
     @Bean
     public AuthenticationManager authenticationManagerBean() throws Exception {
         return super.authenticationManagerBean();
     }
+
     @Bean
-    public JwtAuthenticationFilter authenticationTokenFilterBean(){
+    public JwtAuthenticationFilter authenticationTokenFilterBean() {
         return new JwtAuthenticationFilter();
     }
 }

@@ -14,11 +14,12 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @EnableCaching
 public class SecuritytestApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(SecuritytestApplication.class, args);
-	}
-@Bean
-	public ModelMapper modelMapper(){
-		return new ModelMapper();
-}
+    public static void main(String[] args) {
+        SpringApplication.run(SecuritytestApplication.class, args);
+    }
+
+    @Bean
+    public ModelMapper modelMapper() {
+        return new ModelMapper();
+    }
 }

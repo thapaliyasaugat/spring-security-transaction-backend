@@ -18,6 +18,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.security.test.context.support.WithUserDetails;
 
 import java.util.HashSet;
 
@@ -45,8 +47,8 @@ class AuthServiceImplTest {
     private PasswordEncoder passwordEncoder;
     @Spy
     private JwtConfiguration jwtConfiguration;
-//    @Spy
-//    private UserPrincipal userPrincipal;
+    @Spy
+    private UserPrincipal userPrincipal;
 
     private User user;
     private Role role;
@@ -54,7 +56,7 @@ class AuthServiceImplTest {
     @BeforeEach
     void init(){
         MockitoAnnotations.openMocks(this);
-        role = new Role(2, RoleName.CUSTOMER);
+        role = new Role(2, RoleName.CUSTOMER,null);
         user = User.builder().id(1).userName("Saugat").email("saugat@email.com")
                 .password("passwordEncoder.encode(signUpRequest.getPassword())")
                 .balance(50000.00).status(UserStatus.ACTIVE)
@@ -65,11 +67,9 @@ class AuthServiceImplTest {
 
     @Test
     void signInUser() {
-        LoginRequest loginRequest= LoginRequest.builder().email("saugat@email.com").password("saugat22").build();
-//        UserPrincipal userPrincipal = UserPrincipal.builder().id(1).userName("Saugat Thapaliya").email("saugat@email.com")
-//                .password("fakefakefakefakefakefake").build();
+        LoginRequest loginRequest= LoginRequest.builder().email("saugat@email.com").password("viratKohli").build();
+
         Authentication authentication = mock(Authentication.class);
-        Mockito.when(authenticationManager.authenticate(Mockito.any())).thenReturn(authentication);
         SecurityContext securityContext = mock(SecurityContext.class);
         when(securityContext.getAuthentication()).thenReturn(authentication);
         SecurityContextHolder.setContext(securityContext);
