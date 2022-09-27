@@ -16,4 +16,7 @@ public class CashbackSchemeDto implements Serializable {
     private String Subject;
     private String description;
     private double rewardRate;
+    private boolean active;
+    private String initiatedBy;
+    private String updatedBy;
 }

@@ -1,11 +1,14 @@
 package com.securitytest.securitytest.serviceImpl;
 
 import com.securitytest.securitytest.models.Transactions;
-import com.securitytest.securitytest.models.User;
 import com.securitytest.securitytest.resource.*;
 import com.securitytest.securitytest.repositories.TransactionRepo;
+import com.securitytest.securitytest.service.TransactionChain;
 import com.securitytest.securitytest.service.TransactionService;
 import com.securitytest.securitytest.service.UserService;
+import com.securitytest.securitytest.serviceImpl.transaction_chain_impl.CheckTransactionValidity;
+import com.securitytest.securitytest.serviceImpl.transaction_chain_impl.PerformCashback;
+import com.securitytest.securitytest.serviceImpl.transaction_chain_impl.UpdateTransactionBalance;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.cache.annotation.CacheConfig;
@@ -41,43 +44,26 @@ private final ModelMapper modelMapper;
 
     @Override
     @Transactional
-    public ApiResponse makeTransaction(TransactionRequest transactionRequest) {
+    public ApiResponse<?> makeTransaction(TransactionRequest transactionRequest) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserDto fromUser = userService.userByEmail(authentication.getName());
         UserDto toUser = userService.userByEmail(transactionRequest.getToUser());
-        checkTransactionValidity(transactionRequest,fromUser,toUser);
-        Transactions transactions = new Transactions();
-        transactions.setAmount(transactionRequest.getAmount());
-        transactions.setCustomer_from(modelMapper.map(fromUser,User.class));
-        transactions.setCustomer_to(modelMapper.map(toUser, User.class));
-        updateBalance(transactionRequest,fromUser,toUser);
-        transactionRepo.save(transactions);
-        ApiResponse<String> response = new ApiResponse<>();
+        TransactionChain transactionCheckValidity = new CheckTransactionValidity();
+        TransactionChain updateTransactionBalance = new UpdateTransactionBalance();
+        TransactionChain transactionCashback = new PerformCashback();
+
+        transactionCheckValidity.setNextChain(updateTransactionBalance);
+        updateTransactionBalance.setNextChain(transactionCashback);
+
+        transactionCheckValidity.settlement(transactionRequest,fromUser,toUser);
+
+        ApiResponse<?> response = new ApiResponse<>();
         response.setStatus(0);
         response.setMessage("transaction successful.");
         return response;
     }
-    private void checkTransactionValidity(TransactionRequest transactionRequest,UserDto fromUser,UserDto toUser){
-        if(fromUser.getStatus().equals(UserStatus.BLOCKED)) throw new RuntimeException("Can't perform transaction. Your account is blocked.");
-        if(toUser.getStatus().equals(UserStatus.BLOCKED)) throw new RuntimeException("Can't perform transaction. The account you are trying to send Money is currently blocked.");
-        if(fromUser.getId() == toUser.getId()) throw new RuntimeException("You can't make transaction to yourself");
-        if(transactionRequest.getAmount()>50000) throw new RuntimeException("Can't make transaction above 50,000.");
-        if(transactionRequest.getAmount()<500) throw new RuntimeException("Can't make transaction below 500. ");
-        if(fromUser.getBalance()<transactionRequest.getAmount()) throw new RuntimeException("You don't have enough balance.");
-    }
-
-    private void updateBalance(TransactionRequest transactionRequest, UserDto fromUser, UserDto toUser){
-        try {
-            fromUser.setBalance(fromUser.getBalance() - transactionRequest.getAmount());
-            userService.updateUser(fromUser);
-            toUser.setBalance(toUser.getBalance() + transactionRequest.getAmount());
-            userService.updateUser(toUser);
-        }catch (Exception e){
-            throw new RuntimeException("Something goes wrong, Can't perform transaction.");
-        }
-    }
-
     @Override
+    @Cacheable
     public ApiResponse<PageableResponse> transactionsByCode(TransactionByCode transactionByCode) {
         Pageable p = PageRequest.of(0, 8);
         Page<Transactions> transactions = transactionRepo.findByCode(transactionByCode.getCode(), p);

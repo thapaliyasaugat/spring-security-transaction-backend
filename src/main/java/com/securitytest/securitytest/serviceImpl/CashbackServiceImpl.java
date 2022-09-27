@@ -55,7 +55,7 @@ public class CashbackServiceImpl implements CashbackService {
     }
 
     private void validateRoles(Set<RoleDto> roles) {
-        List<Role> allRoles = roleService.geAllRoles();
+        List<Role> allRoles = roleService.getAllRoles();
         if (roles.stream().allMatch(roleDto -> allRoles.stream().anyMatch(role -> role.getName().equals(roleDto.getName())))) {
             log.info("Roles included for cashback scheme are valid.");
         } else {
@@ -64,12 +64,17 @@ public class CashbackServiceImpl implements CashbackService {
     }
 
     @Override
-    @Cacheable
+//    @Cacheable
     public ApiResponse<CashbackPageableResponse> allCashbackSchemes(PageRequestObj pageRequestObj) {
         log.info("Request for all cashback Scheme pageNo : {} ,pageSize : {}", pageRequestObj.getPageNumber(), pageRequestObj.getPageSize());
         Pageable pageable = PageRequest.of(pageRequestObj.getPageNumber(), pageRequestObj.getPageSize(), Sort.by("createdAt").descending());
         Page<CashbackScheme> page = cashbackRepo.findAll(pageable);
         return getCashbackPageableResponseApiResponse(page);
+    }
+
+    @Override
+    public List<CashbackScheme> allCashbackSchemeList() {
+        return cashbackRepo.findAll();
     }
 
     private ApiResponse<CashbackPageableResponse> getCashbackPageableResponseApiResponse(Page<CashbackScheme> page) {

@@ -1,19 +1,21 @@
 package com.securitytest.securitytest.serviceImpl;
 
+import com.securitytest.securitytest.exceptions.ResourceNotFoundException;
+import com.securitytest.securitytest.models.CashbackScheme;
 import com.securitytest.securitytest.models.Role;
 import com.securitytest.securitytest.models.RoleName;
 import com.securitytest.securitytest.repositories.RoleRepo;
 import com.securitytest.securitytest.resource.ApiResponse;
+import com.securitytest.securitytest.resource.CashbackSchemeDto;
 import com.securitytest.securitytest.resource.RoleDto;
 import com.securitytest.securitytest.resource.UserDto;
 import com.securitytest.securitytest.service.RoleService;
 import com.securitytest.securitytest.service.UserService;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.tool.schema.ast.SqlScriptParserException;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -62,7 +64,15 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
-    public List<Role> geAllRoles() {
+    public List<Role> getAllRoles() {
         return roleRepo.findAll();
+    }
+
+    @Override
+    public List<CashbackSchemeDto> getCashbackSchemeByRoleId(int id) {
+        Role role = roleRepo.findById(id).orElseThrow(()->new ResourceNotFoundException("role","id",String.valueOf(id)));
+        Set<CashbackScheme> schemes = role.getAttainableCashback();
+        List<CashbackSchemeDto> schemeDtos = schemes.stream().map(scheme->modelMapper.map(scheme,CashbackSchemeDto.class)).collect(Collectors.toList());
+        return schemeDtos;
     }
 }

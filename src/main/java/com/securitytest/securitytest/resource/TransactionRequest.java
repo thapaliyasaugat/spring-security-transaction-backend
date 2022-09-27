@@ -10,6 +10,7 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@ToString
 public class TransactionRequest {
     @NotEmpty(message = "Enter valid email of user for transaction.")
     private String toUser;
