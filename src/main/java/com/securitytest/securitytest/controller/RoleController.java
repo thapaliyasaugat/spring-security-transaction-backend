@@ -23,4 +23,8 @@ public class RoleController {
         ApiResponse<List<RoleDto>> roles = roleService.roleOfUser(id);
         return new ResponseEntity<>(roles, HttpStatus.OK);
     }
+    @GetMapping("/all")
+    public ResponseEntity<?> allAvailableRoles(){
+        return new ResponseEntity<>(roleService.getAllRoles(),HttpStatus.OK);
+    }
 }

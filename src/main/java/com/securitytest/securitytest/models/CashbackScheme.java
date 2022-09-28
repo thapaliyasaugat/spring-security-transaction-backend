@@ -22,7 +22,7 @@ public class CashbackScheme extends DateAudit implements Serializable {
 
     private String subject;
     private String description;
-    private double rewardRate;
+    private Double rewardRate;
 
     @ManyToMany
     @JoinTable(name = "cashback_eligible_roles",

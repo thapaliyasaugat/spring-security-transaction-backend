@@ -4,6 +4,8 @@ import com.securitytest.securitytest.resource.*;
 import com.securitytest.securitytest.service.CashbackService;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 @RestController
 @RequestMapping("/cashback")
 public class CashbackController {
@@ -14,7 +16,7 @@ public class CashbackController {
     }
 
     @PostMapping("/create")
-    public ApiResponse<CashbackSchemeDto> createCashbackScheme(@RequestBody CashbackRequest cashbackRequest) {
+    public ApiResponse<CashbackSchemeDto> createCashbackScheme(@Valid @RequestBody CashbackRequest cashbackRequest) {
         return cashbackService.createCashBackScheme(cashbackRequest);
     }
 

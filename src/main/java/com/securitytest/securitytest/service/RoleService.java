@@ -11,6 +11,6 @@ public interface RoleService {
     ApiResponse<List<RoleDto>> roleOfUser(int id);
     RoleDto findByName(String name);
     ApiResponse<List<RoleDto>> getUserRoles(String email);
-    List<Role> getAllRoles();
+    List<RoleDto> getAllRoles();
     List<CashbackSchemeDto> getCashbackSchemeByRoleId(int id);
 }

@@ -55,7 +55,8 @@ public class CashbackServiceImpl implements CashbackService {
     }
 
     private void validateRoles(Set<RoleDto> roles) {
-        List<Role> allRoles = roleService.getAllRoles();
+        if(roles.size()<1) throw new RuntimeException("At-least one role need to be selected.");
+        List<RoleDto> allRoles = roleService.getAllRoles();
         if (roles.stream().allMatch(roleDto -> allRoles.stream().anyMatch(role -> role.getName().equals(roleDto.getName())))) {
             log.info("Roles included for cashback scheme are valid.");
         } else {

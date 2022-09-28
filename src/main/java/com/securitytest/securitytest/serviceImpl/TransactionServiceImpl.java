@@ -3,9 +3,7 @@ package com.securitytest.securitytest.serviceImpl;
 import com.securitytest.securitytest.models.Transactions;
 import com.securitytest.securitytest.resource.*;
 import com.securitytest.securitytest.repositories.TransactionRepo;
-import com.securitytest.securitytest.service.TransactionChain;
-import com.securitytest.securitytest.service.TransactionService;
-import com.securitytest.securitytest.service.UserService;
+import com.securitytest.securitytest.service.*;
 import com.securitytest.securitytest.serviceImpl.transaction_chain_impl.CheckTransactionValidity;
 import com.securitytest.securitytest.serviceImpl.transaction_chain_impl.PerformCashback;
 import com.securitytest.securitytest.serviceImpl.transaction_chain_impl.UpdateTransactionBalance;
@@ -34,12 +32,16 @@ public class TransactionServiceImpl implements TransactionService {
 private final TransactionRepo transactionRepo;
 private final UserService userService;
 private final ModelMapper modelMapper;
+private final RoleService roleService;
+private final CashbackService cashbackService;
 
 
-    public TransactionServiceImpl(TransactionRepo transactionRepo, UserService userService, ModelMapper modelMapper) {
+    public TransactionServiceImpl(TransactionRepo transactionRepo, UserService userService, ModelMapper modelMapper, RoleService roleService, CashbackService cashbackService) {
         this.transactionRepo = transactionRepo;
         this.userService = userService;
         this.modelMapper = modelMapper;
+        this.roleService = roleService;
+        this.cashbackService = cashbackService;
     }
 
     @Override
@@ -49,8 +51,8 @@ private final ModelMapper modelMapper;
         UserDto fromUser = userService.userByEmail(authentication.getName());
         UserDto toUser = userService.userByEmail(transactionRequest.getToUser());
         TransactionChain transactionCheckValidity = new CheckTransactionValidity();
-        TransactionChain updateTransactionBalance = new UpdateTransactionBalance();
-        TransactionChain transactionCashback = new PerformCashback();
+        TransactionChain updateTransactionBalance = new UpdateTransactionBalance(userService, modelMapper, transactionRepo);
+        TransactionChain transactionCashback = new PerformCashback(roleService , userService, cashbackService);
 
         transactionCheckValidity.setNextChain(updateTransactionBalance);
         updateTransactionBalance.setNextChain(transactionCashback);
@@ -72,7 +74,7 @@ private final ModelMapper modelMapper;
 
 
     @Override
-    @Cacheable()
+//    @Cacheable()
     public ApiResponse<PageableResponse> allTransactions(PageRequestObj pageRequest) {
         log.info("Request received for all transaction.");
         Pageable p = PageRequest.of(pageRequest.getPageNumber(), pageRequest.getPageSize(),Sort.by("createdAt").descending());

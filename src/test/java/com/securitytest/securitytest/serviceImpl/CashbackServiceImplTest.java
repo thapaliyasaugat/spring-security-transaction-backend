@@ -46,7 +46,7 @@ class CashbackServiceImplTest {
         MockitoAnnotations.openMocks(this);
         role = new Role(2, RoleName.CUSTOMER, null);
         cashbackScheme = CashbackScheme.builder().id(1).subject("Dashain").description("2079")
-                .active(true).initiatedBy("sauagt@email.com").rewardRate(2).eligibleRoles(new HashSet<>(Arrays.asList(role))).build();
+                .active(true).initiatedBy("sauagt@email.com").rewardRate(2.0).eligibleRoles(new HashSet<>(Arrays.asList(role))).build();
     }
 
     @Test
@@ -57,7 +57,7 @@ class CashbackServiceImplTest {
     @Test
     void allCashbackSchemes() {
         CashbackScheme cashbackSchemeTihar = CashbackScheme.builder().id(2).subject("Tihar").description("2079")
-                .active(true).initiatedBy("sauagt@email.com").rewardRate(2).eligibleRoles(new HashSet<>(Arrays.asList(role))).build();
+                .active(true).initiatedBy("sauagt@email.com").rewardRate(2.0).eligibleRoles(new HashSet<>(Arrays.asList(role))).build();
 
         PageRequestObj pageRequestObj = PageRequestObj.builder().pageNumber(0).pageSize(2).build();
         Page<CashbackScheme> cashbackSchemes = new PageImpl<>(Arrays.asList(cashbackScheme, cashbackSchemeTihar));

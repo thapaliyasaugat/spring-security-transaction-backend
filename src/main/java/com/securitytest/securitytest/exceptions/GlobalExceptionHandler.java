@@ -6,6 +6,7 @@ import io.jsonwebtoken.JwtException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -70,6 +71,14 @@ public class GlobalExceptionHandler {
         ApiResponse<String> response = new ApiResponse<>();
         response.setStatus(1);
         response.setMessage("Invalid Number format.");
+        return new ResponseEntity<>(response,HttpStatus.BAD_REQUEST);
+    }
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<?> httpMessageNotReadableException(HttpMessageNotReadableException ex){
+        log.error(ex.getMessage());
+        ApiResponse<String> response = new ApiResponse<>();
+        response.setStatus(1);
+        response.setMessage("Type Mismatch");
         return new ResponseEntity<>(response,HttpStatus.BAD_REQUEST);
     }
 }
