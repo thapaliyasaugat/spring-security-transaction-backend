@@ -40,7 +40,7 @@ class UserServiceImplTest {
     @BeforeEach
     void setup() {
         MockitoAnnotations.openMocks(this);
-        role = new Role(2, RoleName.CUSTOMER);
+        role = new Role(2, "CUSTOMER",null,null,null);
         user = User.builder().id(1).userName("Saugat").email("saugat@email.com")
                 .password("passwordEncoder.encode(signUpRequest.getPassword())")
                 .balance(50000.00).status(UserStatus.ACTIVE)
@@ -164,7 +164,7 @@ class UserServiceImplTest {
 
     @Test
     void addUserRole() {
-        Role adminRole = new Role(1, RoleName.ADMIN);
+        Role adminRole = new Role(1, "ADMIN",null,null,null);
         User roleUpdatedUser = User.builder().id(1).userName("Saugat").email("saugat@email.com")
                 .password("passwordEncoder.encode(signUpRequest.getPassword())")
                 .balance(50000.00).status(UserStatus.ACTIVE)
@@ -173,7 +173,7 @@ class UserServiceImplTest {
                     add(adminRole);
                 }}).build();
 
-        RoleDto roleDto=RoleDto.builder().id(1).name(RoleName.ADMIN).build();
+        RoleDto roleDto=RoleDto.builder().id(1).name("ADMIN").build();
         when(userRepo.findById(anyInt())).thenReturn(Optional.ofNullable(user));
         when(userRepo.save(any(User.class))).thenReturn(roleUpdatedUser);
 

@@ -7,6 +7,8 @@ public interface TransactionService {
     ApiResponse<PageableResponse> transactionsByCode(TransactionByCode transactionByCode);
     ApiResponse<PageableResponse> allTransactions(PageRequestObj pageRequest);
     ApiResponse<PageableResponse> transactionByInterval(String fromDate, String toDate, PageRequestObj pageRequest);
-    ApiResponse<PageableResponse> ownTransactions(PageRequestObj pageRequest, String filter);
+    ApiResponse<PageableResponse> ownTransactions(TransactionPageRequest transactionPageRequest);
+    ApiResponse<PageableResponse> myTransactionByInterval(String fromDate, String toDate, PageRequestObj pageRequest);
+
 
 }

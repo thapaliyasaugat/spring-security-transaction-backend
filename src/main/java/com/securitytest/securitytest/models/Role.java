@@ -21,13 +21,12 @@ public class Role {
     private int id;
 
     @Column(unique = true)
-    @Enumerated(EnumType.STRING)
-    private RoleName name;
+    private String name;
 
     @ManyToMany(mappedBy = "roles")
     private Set<User> users=new HashSet<>();
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "roles_privileges",
     joinColumns = @JoinColumn(name = "role_id"),
     inverseJoinColumns = @JoinColumn(name = "privilege_id"))

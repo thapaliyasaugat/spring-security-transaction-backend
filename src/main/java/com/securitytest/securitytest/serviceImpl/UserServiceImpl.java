@@ -1,18 +1,24 @@
 package com.securitytest.securitytest.serviceImpl;
 
 import com.securitytest.securitytest.exceptions.ResourceNotFoundException;
+import com.securitytest.securitytest.models.BalanceLoadDetail;
 import com.securitytest.securitytest.models.Role;
 import com.securitytest.securitytest.models.User;
+import com.securitytest.securitytest.repositories.BalanceLoadRepo;
 import com.securitytest.securitytest.resource.*;
 import com.securitytest.securitytest.repositories.UserRepo;
 import com.securitytest.securitytest.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -20,10 +26,12 @@ import java.util.stream.Collectors;
 @Slf4j
 public class UserServiceImpl implements UserService {
     private final UserRepo userRepo;
+    private final BalanceLoadRepo balanceLoadRepo;
     private final ModelMapper modelMapper;
 
-    public UserServiceImpl(UserRepo userRepo, ModelMapper modelMapper) {
+    public UserServiceImpl(UserRepo userRepo, BalanceLoadRepo balanceLoadRepo, ModelMapper modelMapper) {
         this.userRepo = userRepo;
+        this.balanceLoadRepo = balanceLoadRepo;
         this.modelMapper = modelMapper;
     }
 
@@ -108,4 +116,21 @@ public class UserServiceImpl implements UserService {
         return new ApiResponse<>(userByEmail(authentication.getName()),"detail of: ".concat(authentication.getName()),0);
     }
 
+    @Override
+    @Transactional
+    public ApiResponse<UserDto> loadBalance(LoadBalanceRequest loadBalanceRequest) {
+        log.info("Request to load balance , {}",loadBalanceRequest);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User user = userRepo.findByEmail(authentication.getName());
+        if(loadBalanceRequest.getAmount()>100000) throw new RuntimeException("can't load more than 100000.");
+        userRepo.updateBalanceByEmail(authentication.getName(), loadBalanceRequest.getAmount(), user.getBalance());
+        log.info("balance updated.");
+        BalanceLoadDetail balanceLoadDetail = new BalanceLoadDetail();
+        log.info("Saving balance loaded detail");
+        balanceLoadDetail.setLoadedBy(authentication.getName());
+        balanceLoadDetail.setLoadedFrom(loadBalanceRequest.getLoadedFrom());
+        balanceLoadDetail.setAmount(loadBalanceRequest.getAmount());
+        balanceLoadRepo.save(balanceLoadDetail);
+        return new ApiResponse<>(modelMapper.map(user, UserDto.class),"Balance Loaded Sucessfully.",0);
+    }
 }

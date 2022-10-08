@@ -5,6 +5,7 @@ import com.securitytest.securitytest.models.RoleName;
 import com.securitytest.securitytest.repositories.RoleRepo;
 import com.securitytest.securitytest.resource.ApiResponse;
 import com.securitytest.securitytest.resource.RoleDto;
+import com.securitytest.securitytest.resource.RoleRequest;
 import com.securitytest.securitytest.resource.UserDto;
 import com.securitytest.securitytest.service.RoleService;
 import com.securitytest.securitytest.service.UserService;
@@ -43,7 +44,7 @@ public class RoleServiceImpl implements RoleService {
     @Override
     public RoleDto findByName(String name) {
         try {
-            Role role = roleRepo.findByName(RoleName.valueOf(name));
+            Role role = roleRepo.findByName(name);
             return modelMapper.map(role, RoleDto.class);
         }catch (Exception e){
             log.error("error finding role by name {}",e.getMessage());
@@ -60,4 +61,16 @@ public class RoleServiceImpl implements RoleService {
                 0
         );
     }
+
+    @Override
+    public ApiResponse<RoleDto> createRole(RoleRequest roleRequest) {
+        try {
+            log.info("Request to create role : {}", roleRequest);
+            Role role = roleRepo.save(modelMapper.map(roleRequest, Role.class));
+            return new ApiResponse<RoleDto>(modelMapper.map(role, RoleDto.class), "Role Created Successfully.", 0);
+        }catch (Exception e){
+            log.info("Exception on role creation : {}",e.getMessage());
+            throw new RuntimeException("Error creating role. Recheck all fields and submit again.");
+        }
+        }
 }

@@ -43,7 +43,7 @@ class RoleServiceImplTest {
     @BeforeEach
     void setUp(){
         MockitoAnnotations.openMocks(this);
-        role = new Role(2, RoleName.CUSTOMER);
+        role = new Role(2, "CUSTOMER",null,null,null);
         user = User.builder().id(1).userName("Saugat").email("saugat@email.com")
                 .password("passwordEncoder.encode(signUpRequest.getPassword())")
                 .balance(50000.00).status(UserStatus.ACTIVE)
@@ -54,7 +54,7 @@ class RoleServiceImplTest {
 
     @Test
     void roleOfUser() {
-        Role adminRole =  new Role(1, RoleName.ADMIN);
+        Role adminRole =  new Role(1, "ADMIN",null,null,null);
         List<Role> roleList = Arrays.asList(adminRole,role);
         when(roleRepo.roleOfUser(anyInt())).thenReturn(roleList);
         ApiResponse<List<RoleDto>> returnedRoleOfUser = roleServiceImpl.roleOfUser(1);
@@ -65,7 +65,7 @@ class RoleServiceImplTest {
 
     @Test
     void findByName() {
-        when(roleRepo.findByName(any(RoleName.class))).thenReturn(role);
+        when(roleRepo.findByName(anyString())).thenReturn(role);
         RoleDto roleDto = roleServiceImpl.findByName("CUSTOMER");
         assertEquals(roleDto.getName(),RoleName.CUSTOMER);
         assertNotNull(roleDto);
@@ -73,7 +73,7 @@ class RoleServiceImplTest {
 
     @Test
     void getUserRoles() {
-        Role adminRole =  new Role(1, RoleName.ADMIN);
+        Role adminRole =  new Role(1, "ADMIN",null,null,null);
         List<Role> roleList = Arrays.asList(adminRole,role);
         UserDto userDto = modelMapper.map(user, UserDto.class);
         when(userService.userByEmail(anyString())).thenReturn(userDto);

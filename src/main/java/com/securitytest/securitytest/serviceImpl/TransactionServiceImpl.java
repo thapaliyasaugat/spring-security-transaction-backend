@@ -2,10 +2,12 @@ package com.securitytest.securitytest.serviceImpl;
 
 import com.securitytest.securitytest.models.Transactions;
 import com.securitytest.securitytest.models.User;
+import com.securitytest.securitytest.repositories.UserRepo;
 import com.securitytest.securitytest.resource.*;
 import com.securitytest.securitytest.repositories.TransactionRepo;
 import com.securitytest.securitytest.service.TransactionService;
 import com.securitytest.securitytest.service.UserService;
+import com.securitytest.securitytest.util.DateValidator;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.cache.annotation.CacheConfig;
@@ -110,7 +112,7 @@ private final ModelMapper modelMapper;
         try {
             Date from = new SimpleDateFormat("yyyy-MM-dd").parse(fromDate);
             Date to = new SimpleDateFormat("yyyy-MM-dd").parse(toDate);
-            if(!from.before(to)) throw new RuntimeException("invalid Date interval");
+            DateValidator.ValidateDateRange(from,to);
             Pageable p = PageRequest.of(pageRequest.getPageNumber(),pageRequest.getPageSize(),Sort.by("created_at").descending());
             Page<Transactions> transactionsPage = transactionRepo.findAllByTransactionTimeBetween(from, to,p);
             return getTransactionPageableResponse(transactionsPage);
@@ -120,10 +122,15 @@ private final ModelMapper modelMapper;
     }
 
     @Override
-    public ApiResponse<PageableResponse> ownTransactions(PageRequestObj pageRequest, String filter) {
+    public ApiResponse<PageableResponse> ownTransactions(TransactionPageRequest transactionPageRequest) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserDto user = userService.userByEmail(authentication.getName());
-        Pageable p = org.springframework.data.domain.PageRequest.of(pageRequest.getPageNumber(),pageRequest.getPageSize(), Sort.by("created_at").descending());
+        Pageable p = PageRequest.of(transactionPageRequest.getPageNumber(),transactionPageRequest.getPageSize(), Sort.by("created_at").descending());
+        Page<Transactions> ownTransactionList = ownTransactionByFilterOnly(transactionPageRequest.getFilter(),user,p);
+        return getTransactionPageableResponse(ownTransactionList);
+
+    }
+    private Page<Transactions> ownTransactionByFilterOnly(String filter, UserDto user, Pageable p){
         Page<Transactions> ownTransactionList = Page.empty();
         if(filter.equals("SEND") || filter.equals("RECEIVED")) {
             if (filter.equals("SEND")) ownTransactionList = transactionRepo.ownSendTransactions(user.getId(), p);
@@ -131,7 +138,60 @@ private final ModelMapper modelMapper;
         }else{
             ownTransactionList = transactionRepo.ownTransactions(user.getId(), p);
         }
-        return getTransactionPageableResponse(ownTransactionList);
+        return ownTransactionList;
+    }
+    private Page<Transactions> ownTransactionByFilterAndDate(String filter,String fromDate,String toDate, UserDto user, Pageable p){
+        try {
+            Page<Transactions> ownTransactionList = Page.empty();
+            Date from = new SimpleDateFormat("yyyy-MM-dd").parse(fromDate);
+            Date to = new SimpleDateFormat("yyyy-MM-dd").parse(toDate);
+            DateValidator.ValidateDateRange(from, to);
+            if (filter.equals("SEND") || filter.equals("RECEIVED")) {
+                if (filter.equals("SEND"))
+                    ownTransactionList = transactionRepo.ownSendTransactionsBetweenDate(user.getId(), from, to, p);
+                if (filter.equals("RECEIVED"))
+                    ownTransactionList = transactionRepo.ownReceivedTransactionsBetweenDate(user.getId(), from, to, p);
+            } else {
+                ownTransactionList = transactionRepo.myTransactionsByInterval(from, to, user.getId(), p);
+            }
+            return ownTransactionList;
+        }catch (Exception e){
+            log.error(e.getMessage());
+            throw new RuntimeException("Error Parsing Date.");
+        }
+    }
+    private Page<Transactions> ownTransactionByFilterAndAmount(Double fromAmount,Double toAmount,String filter ,UserDto user, Pageable p){
+        try {
+            Page<Transactions> ownTransactionList = Page.empty();
+            if (filter.equals("SEND") || filter.equals("RECEIVED")) {
+                if (filter.equals("SEND"))
+                    ownTransactionList = transactionRepo.ownSendTransactionBetweenAmount(user.getId(), fromAmount,toAmount,p);
+                if (filter.equals("RECEIVED"))
+                    ownTransactionList = transactionRepo.ownReceivedTransactionBetweenAmount(user.getId(), fromAmount,toAmount,p);
+            } else {
+                ownTransactionList = transactionRepo.myTransactionsByInterval(from, to, user.getId(), p);
+            }
+            return ownTransactionList;
+        }catch (Exception e){
+            log.error(e.getMessage());
+            throw new RuntimeException("Error Parsing Date.");
+        }
+    }
 
+    @Override
+    public ApiResponse<PageableResponse> myTransactionByInterval(String fromDate, String toDate, PageRequestObj pageRequest) {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        UserDto user = userService.userByEmail(email);
+        try {
+            Date from = new SimpleDateFormat("yyyy-MM-dd").parse(fromDate);
+            Date to = new SimpleDateFormat("yyyy-MM-dd").parse(toDate);
+            if(!from.before(to)) throw new RuntimeException("invalid Date interval");
+            Pageable p = PageRequest.of(pageRequest.getPageNumber(),pageRequest.getPageSize(),Sort.by("created_at").descending());
+            Page<Transactions> transactionsPage = transactionRepo.myTransactionsByInterval(from, to,user.getId(),p);
+            return getTransactionPageableResponse(transactionsPage);
+        }catch (Exception e){
+            log.info("Error fetching individual user transactions by interval , {}",e.getMessage());
+            throw new RuntimeException("Date type incompatible");
+        }
     }
 }

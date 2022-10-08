@@ -14,4 +14,5 @@ public interface UserService {
     UserDto updateUser(UserDto userDto);
     void addUserRole(RoleDto roleDto,int id);
     ApiResponse<UserDto> getMyDetail();
+    ApiResponse<UserDto> loadBalance(LoadBalanceRequest loadBalanceRequest);
 }

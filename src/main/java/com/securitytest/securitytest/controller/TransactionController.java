@@ -12,7 +12,7 @@ import javax.validation.Valid;
 
 @Slf4j
 @RestController
-@RequestMapping("/transaction")
+@RequestMapping("/api/transaction")
 public class TransactionController {
     private final TransactionService transactionService;
 
@@ -49,8 +49,17 @@ public class TransactionController {
     }
 
     @PostMapping("/my_transactions")
-    public ResponseEntity<?> myTransactions(@RequestBody PageRequestObj pageRequest, @RequestParam("filter") String filter) {
-        ApiResponse<PageableResponse> transactions = transactionService.ownTransactions(pageRequest,filter);
+    public ResponseEntity<?> myTransactions(@RequestBody TransactionPageRequest transactionPageRequest){
+        ApiResponse<PageableResponse> transactions = transactionService.ownTransactions(transactionPageRequest);
         return new ResponseEntity<>(transactions, HttpStatus.OK);
+    }
+    @PostMapping("/my_transactions/time/between")
+    public ResponseEntity<?> myTransactionByInterval(@DateTimeFormat(pattern = "yyyy-MM-dd") String fromDate,
+                                                     @DateTimeFormat(pattern = "yyyy-MM-dd") String toDate,
+                                                     @RequestBody PageRequestObj pageRequest){
+        log.info("from date : {}",fromDate);
+        log.info("to date : {}",toDate);
+        ApiResponse<PageableResponse> transactionDtos = transactionService.myTransactionByInterval(fromDate,toDate,pageRequest);
+        return new ResponseEntity<>(transactionDtos, HttpStatus.OK);
     }
 }

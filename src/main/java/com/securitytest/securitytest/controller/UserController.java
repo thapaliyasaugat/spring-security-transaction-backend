@@ -1,16 +1,13 @@
 package com.securitytest.securitytest.controller;
 
-import com.securitytest.securitytest.resource.ApiResponse;
-import com.securitytest.securitytest.resource.PageRequestObj;
-import com.securitytest.securitytest.resource.UserDto;
-import com.securitytest.securitytest.resource.UserPageableResponse;
+import com.securitytest.securitytest.resource.*;
 import com.securitytest.securitytest.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/api/user")
 public class UserController {
     private final UserService userService;
 
@@ -35,5 +32,10 @@ public class UserController {
     @GetMapping("/me/detail")
     public ApiResponse<UserDto> ownDetail(){
         return userService.getMyDetail();
+    }
+
+    @PostMapping("/load/balance")
+    public ApiResponse<?> loadBalance(@RequestBody LoadBalanceRequest loadBalanceRequest){
+        return userService.loadBalance(loadBalanceRequest);
     }
 }

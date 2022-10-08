@@ -10,5 +10,5 @@ import lombok.*;
 @Builder
 public class RoleDto {
     private int id;
-    private RoleName name;
+    private String name;
 }

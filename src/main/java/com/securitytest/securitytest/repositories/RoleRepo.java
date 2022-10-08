@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.List;
 
 public interface RoleRepo extends JpaRepository<Role,Integer> {
-    Role findByName(RoleName roleName);
+    Role findByName(String roleName);
     @Query(value = "select * from roles where id in (select role_id from user_roles where user_id=:id)",nativeQuery = true)
     List<Role> roleOfUser(int id);
 }
