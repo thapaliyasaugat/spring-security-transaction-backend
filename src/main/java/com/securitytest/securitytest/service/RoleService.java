@@ -8,6 +8,7 @@ import java.util.List;
 
 public interface RoleService {
     ApiResponse<List<RoleDto>> roleOfUser(int id);
+    ApiResponse<List<RoleDto>> allRoles();
     RoleDto findByName(String name);
     ApiResponse<List<RoleDto>> getUserRoles(String email);
     ApiResponse<RoleDto> createRole(RoleRequest roleRequest);

@@ -1,16 +1,13 @@
 package com.securitytest.securitytest.serviceImpl;
 
 import com.securitytest.securitytest.configuration.JwtConfiguration;
-import com.securitytest.securitytest.configuration.UserPrincipal;
 import com.securitytest.securitytest.models.Role;
-import com.securitytest.securitytest.models.RoleName;
 import com.securitytest.securitytest.models.User;
 import com.securitytest.securitytest.resource.*;
 import com.securitytest.securitytest.service.RoleService;
 import com.securitytest.securitytest.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.provider.EnumSource;
 import org.mockito.*;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -54,7 +51,7 @@ class AuthServiceImplTest {
     @BeforeEach
     void init(){
         MockitoAnnotations.openMocks(this);
-        role = new Role(2, RoleName.CUSTOMER);
+        role = new Role(2, "CUSTOMER",null,null,null);
         user = User.builder().id(1).userName("Saugat").email("saugat@email.com")
                 .password("passwordEncoder.encode(signUpRequest.getPassword())")
                 .balance(50000.00).status(UserStatus.ACTIVE)
@@ -88,7 +85,7 @@ class AuthServiceImplTest {
         UserDto userDto = modelMapper.map(user, UserDto.class);
         when(roleService.findByName(anyString())).thenReturn(roleDto);
         when(userService.save(any(User.class))).thenReturn(userDto);
-        ApiResponse response = authServiceImpl.signUpUser(signUpRequest);
+        ApiResponse<?> response = authServiceImpl.signUpUser(signUpRequest);
 
         assertEquals(response.getStatus(),0);
         assertEquals(response.getMessage(),"User Created successfully.");

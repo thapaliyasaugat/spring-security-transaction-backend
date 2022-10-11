@@ -13,10 +13,11 @@ public class TransactionPageRequest {
     private int pageNumber;
     private int pageSize;
     private String filter;
-    private Date fromDate;
-    private Date toDate;
+    private String fromDate;
+    private String toDate;
     private Double fromAmount;
     private Double toAmount;
+    private String code;
 
     @Override
     public String toString() {

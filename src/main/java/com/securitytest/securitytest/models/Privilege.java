@@ -22,4 +22,6 @@ public class Privilege {
 
     @ManyToMany(mappedBy = "privileges")
     private Set<Role> roles;
+
+
 }

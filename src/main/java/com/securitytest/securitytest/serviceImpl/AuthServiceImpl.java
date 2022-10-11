@@ -2,7 +2,6 @@ package com.securitytest.securitytest.serviceImpl;
 
 import com.securitytest.securitytest.configuration.JwtConfiguration;
 import com.securitytest.securitytest.models.Role;
-import com.securitytest.securitytest.models.RoleName;
 import com.securitytest.securitytest.models.User;
 import com.securitytest.securitytest.resource.*;
 import com.securitytest.securitytest.service.AuthService;
@@ -61,8 +60,8 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     @Transactional
-    public ApiResponse signUpUser(SignUpRequest signUpRequest) {
-        RoleDto role = roleService.findByName(RoleName.CUSTOMER.toString());
+    public ApiResponse<?> signUpUser(SignUpRequest signUpRequest) {
+        RoleDto role = roleService.findByName("CUSTOMER");
         if(role==null) throw new RuntimeException("No Role Specified");
         Set<Role> roleSet = new HashSet<>();
         roleSet.add(modelMapper.map(role,Role.class));
@@ -74,7 +73,7 @@ public class AuthServiceImpl implements AuthService {
         user.setBalance(0.0);
         user.setPassword(passwordEncoder.encode(signUpRequest.getPassword()));
         userService.save(user);
-        ApiResponse apiResponse = new ApiResponse();
+        ApiResponse<?> apiResponse = new ApiResponse<>();
         apiResponse.setStatus(0);
         apiResponse.setMessage("User Created successfully.");
         return apiResponse;

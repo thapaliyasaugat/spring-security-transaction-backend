@@ -18,6 +18,11 @@ public class RoleController {
     public RoleController(RoleService roleService) {
         this.roleService = roleService;
     }
+    @GetMapping("/all")
+    public ResponseEntity<?> getAllRoles(){
+        ApiResponse<List<RoleDto>> roles = roleService.allRoles();
+        return new ResponseEntity<>(roles, HttpStatus.OK);
+    }
 
     @GetMapping("id/{id}")
     public ResponseEntity<?> roleOfUser(@PathVariable int id){

@@ -2,8 +2,7 @@ package com.securitytest.securitytest.resource;
 
 import lombok.*;
 
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.*;
 
 @Data
 @NoArgsConstructor
@@ -11,8 +10,8 @@ import javax.validation.constraints.NotNull;
 @ToString
 @Builder
 public class LoadBalanceRequest {
-    @NotEmpty(message = "Specify from where yo want to load.")
+    @NotBlank(message = "Specify from where yo want to load.")
     private String loadedFrom;
-    @NotNull(message = "Invalid amount.")
+    @DecimalMin("0.0") @DecimalMax("50000.0")
     private Double amount;
 }

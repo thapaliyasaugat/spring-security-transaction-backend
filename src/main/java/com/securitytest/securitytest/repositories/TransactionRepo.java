@@ -39,5 +39,12 @@ public interface TransactionRepo extends JpaRepository<Transactions,Integer> {
     Page<Transactions> mySendTransactionsByDateAndAmount(Date transactionTimeStart,Date transactionTimeEnd,Double fromAmount,Double toAmount, int id ,Pageable pageable);
     @Query(value = "select * from (select * from transactions where transaction_to = :id) where created_at between :transactionTimeStart and :transactionTimeEnd HAVING amount between :fromAmount and :toAmount ",nativeQuery = true)
     Page<Transactions> myReceivedTransactionsByDateAndAmount(Date transactionTimeStart,Date transactionTimeEnd,Double fromAmount,Double toAmount, int id ,Pageable pageable);
+    @Query(value = "select * from transactions where (transaction_from=:id OR transaction_to = :id) and (created_at between :from and :to) and (amount between :fromAmount and :toAmount)",nativeQuery = true)
+    Page<Transactions> ownTransactionByAllFilters(Date from,Date to,Double fromAmount,Double toAmount,int id,Pageable pageable);
 
+    @Query(value = "select * from transactions where transaction_from = :id and (created_at between :from and :to) and (amount between :fromAmount and :toAmount)",nativeQuery = true)
+    Page<Transactions> ownSendTransactionByAllFilters(Date from,Date to,Double fromAmount,Double toAmount,int id,Pageable pageable);
+
+    @Query(value = "select * from (select * from transactions t where t.transaction_to = :id) where created_at between :from and :to and amount between :fromAmount and :toAmount",nativeQuery = true)
+    Page<Transactions> ownReceivedTransactionByAllFilters(Date from,Date to,Double fromAmount,Double toAmount,int id,Pageable pageable);
 }

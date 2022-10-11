@@ -1,7 +1,6 @@
 package com.securitytest.securitytest.serviceImpl;
 
 import com.securitytest.securitytest.models.Role;
-import com.securitytest.securitytest.models.RoleName;
 import com.securitytest.securitytest.repositories.RoleRepo;
 import com.securitytest.securitytest.resource.ApiResponse;
 import com.securitytest.securitytest.resource.RoleDto;
@@ -10,7 +9,6 @@ import com.securitytest.securitytest.resource.UserDto;
 import com.securitytest.securitytest.service.RoleService;
 import com.securitytest.securitytest.service.UserService;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.tool.schema.ast.SqlScriptParserException;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
@@ -42,6 +40,13 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
+    public ApiResponse<List<RoleDto>> allRoles() {
+        List<Role> roles = roleRepo.findAll();
+        List<RoleDto> roleDtoList = roles.stream().map(role -> modelMapper.map(role, RoleDto.class)).collect(Collectors.toList());
+        return new ApiResponse<>(roleDtoList,"all Roles",0);
+    }
+
+    @Override
     public RoleDto findByName(String name) {
         try {
             Role role = roleRepo.findByName(name);
@@ -67,7 +72,7 @@ public class RoleServiceImpl implements RoleService {
         try {
             log.info("Request to create role : {}", roleRequest);
             Role role = roleRepo.save(modelMapper.map(roleRequest, Role.class));
-            return new ApiResponse<RoleDto>(modelMapper.map(role, RoleDto.class), "Role Created Successfully.", 0);
+            return new ApiResponse<>(modelMapper.map(role, RoleDto.class), "Role Created Successfully.", 0);
         }catch (Exception e){
             log.info("Exception on role creation : {}",e.getMessage());
             throw new RuntimeException("Error creating role. Recheck all fields and submit again.");

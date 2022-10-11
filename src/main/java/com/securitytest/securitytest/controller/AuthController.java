@@ -22,7 +22,7 @@ public class AuthController {
         this.authService = authService;
     }
     @PostMapping("/signup")
-    public ApiResponse signUpUser(@Valid @RequestBody SignUpRequest signUpRequest){
+    public ApiResponse<?> signUpUser(@Valid @RequestBody SignUpRequest signUpRequest){
         return authService.signUpUser(signUpRequest);
     }
 
