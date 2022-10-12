@@ -52,14 +52,18 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
         Privilege viewUserRolesPrivilege = createPrivilegeIfNotFound("VIEW_USER_ROLES_PRIVILEGE");
         Privilege blockActivateUserPrivilege = createPrivilegeIfNotFound("BLOCK_ACTIVATE_USER_PRIVILEGE");
         Privilege updateUserRolePrivilege = createPrivilegeIfNotFound("UPDATE_USER_ROLE_PRIVILEGE");
+        Privilege fetchPrivilegesPrivilege = createPrivilegeIfNotFound("FETCH_PRIVILEGES_PRIVILEGE");
 
-        Set<Privilege> adminPrivilege = new HashSet<>(Arrays.asList(fetchAllLoadedAmountDetailPrivilege,createAndUpdateNewRolePrivilege));
+        Set<Privilege> adminPrivilege = new HashSet<>(Arrays.asList(fetchAllLoadedAmountDetailPrivilege,createAndUpdateNewRolePrivilege,fetchAllUsersDataPrivilege,blockActivateUserPrivilege,updateUserRolePrivilege,viewUserRolesPrivilege,
+                fetchOwnDataPrivilege,loadBalancePrivilege,fetchOwnLoadedDataPrivilege,performAndViewOwnTransactionsPrivilege,viewOthersTransactionPrivilege,
+                fetchPrivilegesPrivilege));
         createRoleIfNotFound("ADMIN",adminPrivilege);
 
-        Set<Privilege> adminSupportPrivilege = new HashSet<>(Arrays.asList(fetchAllUsersDataPrivilege,blockActivateUserPrivilege,updateUserRolePrivilege,viewUserRolesPrivilege));
+        Set<Privilege> adminSupportPrivilege = new HashSet<>(Arrays.asList(fetchAllUsersDataPrivilege,blockActivateUserPrivilege,updateUserRolePrivilege,viewUserRolesPrivilege,
+                fetchOwnDataPrivilege,loadBalancePrivilege,fetchOwnLoadedDataPrivilege,performAndViewOwnTransactionsPrivilege,viewOthersTransactionPrivilege));
         createRoleIfNotFound("ADMIN-SUPPORT",adminSupportPrivilege);
 
-        Set<Privilege> transactionPrivilege = new HashSet<>(Collections.singletonList(viewOthersTransactionPrivilege));
+        Set<Privilege> transactionPrivilege = new HashSet<>(Arrays.asList(fetchOwnDataPrivilege,loadBalancePrivilege,fetchOwnLoadedDataPrivilege,performAndViewOwnTransactionsPrivilege,viewOthersTransactionPrivilege));
         createRoleIfNotFound("TRANSACTION",transactionPrivilege);
 
         Set<Privilege> customerPrivilege = new HashSet<>(Arrays.asList(fetchOwnDataPrivilege,loadBalancePrivilege,fetchOwnLoadedDataPrivilege,performAndViewOwnTransactionsPrivilege));

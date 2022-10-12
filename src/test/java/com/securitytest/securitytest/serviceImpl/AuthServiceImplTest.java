@@ -42,9 +42,6 @@ class AuthServiceImplTest {
     private PasswordEncoder passwordEncoder;
     @Spy
     private JwtConfiguration jwtConfiguration;
-//    @Spy
-//    private UserPrincipal userPrincipal;
-
     private User user;
     private Role role;
 

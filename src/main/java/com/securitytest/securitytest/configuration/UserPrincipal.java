@@ -53,7 +53,7 @@ public class UserPrincipal implements UserDetails {
     }
     private static List<Privilege> getPrivileges(Set<Role> roles){
         List<Privilege> privileges = new ArrayList<>();
-        roles.forEach(role -> role.getPrivileges().forEach(privilege -> privileges.add(privilege)));
+        roles.forEach(role -> privileges.addAll(role.getPrivileges()));
         return privileges;
     }
 

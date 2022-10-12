@@ -14,13 +14,14 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
 import java.sql.ResultSet;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Slf4j
-@Component
+@Repository
 public class TransactionDaoImpl implements TransactionDao {
     private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
     private final ModelMapper modelMapper;
@@ -57,14 +58,15 @@ public class TransactionDaoImpl implements TransactionDao {
                 DateValidator.ValidateDateRange(from, to);
                 parameter.put("fromDate", from);
                 parameter.put("toDate", to);
-                query += "and created_at between :fromDate and :toDate ";
+                query += user!=null ? "and created_at between :fromDate and :toDate " : "where created_at between :fromDate and :toDate " ;
             }catch (Exception e){
                 log.info("ERROR WHILE PARSING DATE :: {}",e.getMessage());
                 throw new RuntimeException("Invalid Date type or interval.");
             }
         }
         if(transactionPageRequest.getFromAmount()!=null && transactionPageRequest.getToAmount()!=null){
-            query+= "and amount between :fromAmount and :toAmount";
+            query+= user!=null || transactionPageRequest.getFromDate() != null && transactionPageRequest.getToDate() != null ? "and amount between :fromAmount and :toAmount" :
+                    "where amount between :fromAmount and :toAmount";
             if(transactionPageRequest.getFromAmount()>transactionPageRequest.getToAmount()){
                 throw new RuntimeException("Invalid Amount Range.");
             }
@@ -72,7 +74,8 @@ public class TransactionDaoImpl implements TransactionDao {
             parameter.put("toAmount", transactionPageRequest.getToAmount());
         }
         if(transactionPageRequest.getCode()!=null){
-            query+= " and code=:code";
+            query+= user!=null || transactionPageRequest.getFromDate() != null && transactionPageRequest.getToDate() != null ||
+                    transactionPageRequest.getFromAmount()!=null && transactionPageRequest.getToAmount()!=null ?" and code=:code" : "where code=:code";
             parameter.put("code",transactionPageRequest.getCode());
         }
         query+= " order by created_at desc";

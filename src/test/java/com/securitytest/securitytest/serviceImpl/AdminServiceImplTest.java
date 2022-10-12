@@ -2,7 +2,6 @@ package com.securitytest.securitytest.serviceImpl;
 
 import com.securitytest.securitytest.exceptions.ResourceNotFoundException;
 import com.securitytest.securitytest.models.Role;
-import com.securitytest.securitytest.models.RoleName;
 import com.securitytest.securitytest.models.User;
 import com.securitytest.securitytest.resource.*;
 import com.securitytest.securitytest.service.RoleService;

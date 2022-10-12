@@ -72,27 +72,16 @@ class TransactionServiceImplTest {
         when(userService.userByEmail(anyString())).thenReturn(fromUserDto);
     }
 
-    @Test
-    void transactionsByCode() {
-        TransactionByCode transactionByCode = TransactionByCode.builder().code("fakeCode1").build();
-        Page<Transactions> transactions = new PageImpl<>(Arrays.asList(sampleTransaction));
-        when(transactionRepo.findByCode(anyString(), any(Pageable.class))).thenReturn(transactions);
-        ApiResponse<PageableResponse> response = transactionServiceImpl.transactionsByCode(transactionByCode);
-        assertEquals(response.getData().getPageSize(),1);
-        assertEquals(response.getData().getPageNumber(),0);
-        assertEquals(response.getData().getTotalNoOfPages(),1);
-        assertEquals(response.getData().getTotalNoOfElements(),1);
-        assertNotNull(response.getData());
-
-    }
-
 //    @Test
 //    void allTransactions() {
 //        Transactions firstTransaction = Transactions.builder().id(1).code("fakeCode").amount(10000.00)
 //                .customer_from(fromUser).customer_to(toUser).build();
 //        Transactions secondTransaction = Transactions.builder().id(1).code("fakeCode2").amount(20000.00)
 //                .customer_from(toUser).customer_to(fromUser).build();
+//        when(userService.userByEmail(anyString())).thenReturn(modelMapper.map(fromUser, UserDto.class));
+//
 //        Page<Transactions> transactions = new PageImpl<>(Arrays.asList(sampleTransaction,firstTransaction,secondTransaction));
+////        when(transactionDao.allTransactions(transactionPageRequest,userDto,p))
 //        when(transactionRepo.findAll(any(Pageable.class))).thenReturn(transactions);
 //        PageRequestObj pageRequest = PageRequestObj.builder().pageNumber(0).pageSize(3).build();
 //        ApiResponse<PageableResponse> response = transactionServiceImpl.allTransactions(pageRequest);
@@ -106,22 +95,5 @@ class TransactionServiceImplTest {
 
     @Test
     void ownTransactions() {
-    }
-    @Test
-    void transactionByInterval(){
-        Transactions firstTransaction = Transactions.builder().id(1).code("fakeCode").amount(10000.00)
-                .customer_from(fromUser).customer_to(toUser).build();
-        Transactions secondTransaction = Transactions.builder().id(1).code("fakeCode2").amount(20000.00)
-                .customer_from(toUser).customer_to(fromUser).build();
-        PageRequestObj pageRequestObj = PageRequestObj.builder().pageNumber(0).pageSize(3).build();
-        Page<Transactions> transactions = new PageImpl<>(Arrays.asList(sampleTransaction,firstTransaction,secondTransaction));
-        when(transactionRepo.findAllByTransactionTimeBetween(any(Date.class),any(Date.class),any(Pageable.class))).thenReturn(transactions);
-        ApiResponse<PageableResponse> response = transactionServiceImpl.transactionByInterval("2022-10-12","2022-11-13",pageRequestObj);
-        assertEquals(response.getData().getPageNumber(),0);
-        assertEquals(response.getData().getPageSize(),3);
-        assertEquals(response.getData().getTotalNoOfPages(),1);
-        assertEquals(response.getData().getTotalNoOfElements(),3);
-        assertEquals(response.getData().getContent().size(),3);
-        assertNotNull(response);
     }
 }

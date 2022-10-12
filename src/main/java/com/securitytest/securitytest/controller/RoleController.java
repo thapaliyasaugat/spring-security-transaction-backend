@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -30,11 +31,16 @@ public class RoleController {
         return new ResponseEntity<>(roles, HttpStatus.OK);
     }
     @PostMapping("/create")
-    public ApiResponse<?> createNewRole(@RequestBody RoleRequest roleRequest){
+    public ApiResponse<?> createNewRole(@Valid @RequestBody RoleRequest roleRequest){
         return roleService.createRole(roleRequest);
     }
     @PutMapping("/update/{id}")
     public ApiResponse<?> updateRole(@RequestBody RoleRequest roleRequest,@PathVariable int id){
         return null;
+    }
+
+    @GetMapping("/available-update/{id}")
+    public ApiResponse<?> availableRoleToUpdate(@PathVariable int id){
+        return roleService.userUpdateAvailableRoles(id);
     }
 }

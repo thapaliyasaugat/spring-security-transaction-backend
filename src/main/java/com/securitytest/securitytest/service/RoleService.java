@@ -12,4 +12,5 @@ public interface RoleService {
     RoleDto findByName(String name);
     ApiResponse<List<RoleDto>> getUserRoles(String email);
     ApiResponse<RoleDto> createRole(RoleRequest roleRequest);
+    ApiResponse<List<RoleDto>> userUpdateAvailableRoles(int id);
 }

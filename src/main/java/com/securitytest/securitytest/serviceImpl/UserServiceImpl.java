@@ -1,5 +1,6 @@
 package com.securitytest.securitytest.serviceImpl;
 
+import com.securitytest.securitytest.configuration.UserPrincipal;
 import com.securitytest.securitytest.exceptions.ResourceNotFoundException;
 import com.securitytest.securitytest.models.BalanceLoadDetail;
 import com.securitytest.securitytest.models.Role;

@@ -1,6 +1,7 @@
 package com.securitytest.securitytest.serviceImpl;
 
 import com.securitytest.securitytest.configuration.JwtConfiguration;
+import com.securitytest.securitytest.configuration.UserPrincipal;
 import com.securitytest.securitytest.models.Role;
 import com.securitytest.securitytest.models.User;
 import com.securitytest.securitytest.resource.*;
@@ -18,7 +19,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service(value = "userAuthService")
@@ -52,9 +55,12 @@ public class AuthServiceImpl implements AuthService {
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         String jwt = jwtConfiguration.generateToken(authentication);
+        UserPrincipal principal = (UserPrincipal)authentication.getPrincipal();
+        List<RoleDto> roles = principal.getRoles().stream().map(role -> modelMapper.map(role, RoleDto.class)).collect(Collectors.toList());
         JwtAuthResponse jwtAuthResponse = new JwtAuthResponse();
         jwtAuthResponse.setToken(jwt);
         jwtAuthResponse.setUserName(authentication.getName());
+        jwtAuthResponse.setRoles(roles);
         return new ApiResponse<>(jwtAuthResponse,"Signed in successfully.",0);
     }
 

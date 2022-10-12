@@ -5,8 +5,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.access.expression.SecurityExpressionHandler;
-import org.springframework.security.access.hierarchicalroles.RoleHierarchy;
-import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -62,7 +60,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/api/transaction/create","/api/transaction/my_transactions").hasAnyAuthority("PERFORM_AND_VIEW_OWN_TRANSACTIONS_PRIVILEGE")
                 .antMatchers("/api/transaction/list").hasAnyAuthority("VIEW_OTHERS_TRANSACTIONS_PRIVILEGE")
                 .antMatchers("/api/admin/role/create","/api/admin/role/update/*").hasAuthority("CREATE_AND_UPDATE_NEW_ROLE_PRIVILEGE")
-                .antMatchers("/api/admin/role/id/*","/api/admin/role/all").hasAnyAuthority("VIEW_USER_ROLES_PRIVILEGE")
+                .antMatchers("/api/admin/role/id/*","/api/admin/role/all","/api/admin/role/available-update/*").hasAnyAuthority("VIEW_USER_ROLES_PRIVILEGE")
                 .antMatchers("/api/admin/block/*","/api/admin/activate/*").hasAnyAuthority("BLOCK_ACTIVATE_USER_PRIVILEGE")
                 .antMatchers("/api/admin/update/role").hasAnyAuthority("UPDATE_USER_ROLE_PRIVILEGE")
                 .antMatchers("/api/privilege/*").hasAnyAuthority("FETCH_PRIVILEGES_PRIVILEGE")

@@ -18,6 +18,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.test.context.support.WithMockUser;
+
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -182,15 +184,16 @@ class UserServiceImplTest {
     }
 
     @Test
+    @WithMockUser("saugat@email.com")
     void getMyDetail() {
-        Authentication authentication = mock(Authentication.class);
-        SecurityContext securityContext = mock(SecurityContext.class);
-        when(securityContext.getAuthentication()).thenReturn(authentication);
-        SecurityContextHolder.setContext(securityContext);
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-
-        when(authentication.isAuthenticated()).thenReturn(true);
-        when(authentication.getName()).thenReturn("saugat@email.com");
+//        Authentication authentication = mock(Authentication.class);
+//        SecurityContext securityContext = mock(SecurityContext.class);
+//        when(securityContext.getAuthentication()).thenReturn(authentication);
+//        SecurityContextHolder.setContext(securityContext);
+//        SecurityContextHolder.getContext().setAuthentication(authentication);
+//
+//        when(authentication.isAuthenticated()).thenReturn(true);
+//        when(authentication.getName()).thenReturn("saugat@email.com");
 //        UserPrincipal fakeUser = UserPrincipal.builder().id(1).userName("saugat").email("saugat@email.com")
 //                .password("fdfdfdfd").build();
 //      when(authentication.getPrincipal()).thenReturn(fakeUser);
