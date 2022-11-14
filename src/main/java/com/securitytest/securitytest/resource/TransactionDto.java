@@ -1,15 +1,11 @@
 package com.securitytest.securitytest.resource;
 
 import com.securitytest.securitytest.models.User;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.io.Serializable;
 
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class TransactionDto implements Serializable {

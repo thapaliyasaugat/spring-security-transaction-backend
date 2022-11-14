@@ -2,6 +2,7 @@ package com.securitytest.securitytest.exceptions;
 
 
 import com.securitytest.securitytest.resource.ApiResponse;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -59,9 +60,9 @@ public class GlobalExceptionHandler {
         response.setMessage("Unexpected type, check all constraints.");
         return new ResponseEntity<>(response,HttpStatus.BAD_REQUEST);
     }
-    @ExceptionHandler(JwtException.class)
-    public ResponseEntity<?> jwtException(JwtException ex){
-        log.error("jwt exception : {}",ex.getMessage());
-        return new ResponseEntity<>(new ApiResponse<String>(null,"Invalid Request.",1),HttpStatus.BAD_REQUEST);
+    @ExceptionHandler(ExpiredJwtException.class)
+    public ResponseEntity<?> expiredJwtException(ExpiredJwtException ex){
+        log.error(" expired jwt exception : {}",ex.getMessage());
+        return new ResponseEntity<>(new ApiResponse<String>(null,"Session Expired.",1),HttpStatus.BAD_REQUEST);
     }
 }

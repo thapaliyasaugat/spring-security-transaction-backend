@@ -3,9 +3,6 @@ package com.securitytest.securitytest.service;
 import com.securitytest.securitytest.models.User;
 import com.securitytest.securitytest.resource.*;
 
-import java.util.List;
-
-
 public interface UserService {
     ApiResponse<UserDto> userById(int id);
     ApiResponse<UserPageableResponse> allUsers(PageRequestObj pageRequest);

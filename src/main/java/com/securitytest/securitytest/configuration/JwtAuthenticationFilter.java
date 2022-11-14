@@ -16,8 +16,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
-   @Autowired
-   private CustomUserDetailService customUserDetailService;
+    @Autowired
+    private CustomUserDetailService customUserDetailService;
 
     @Autowired //circular dependency
     private JwtConfiguration jwtConfiguration;
@@ -27,6 +27,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String header = request.getHeader("HEADER_STRING");
         String email = null;
         String authToken = null;
+        if(header == null) {
+            logger.warn("Couldn't find token string, header will be ignored");
+        }
         if (header != null) {
             authToken = header;
             try {
@@ -35,7 +38,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 logger.error("An error occurred while fetching email from Token", e);
             } catch (ExpiredJwtException e) {
                 logger.warn("The token has expired", e);
-            } catch(SignatureException e){
+            } catch (SignatureException e) {
                 logger.error("Authentication Failed. Username or Password not valid.");
             }
         } else {

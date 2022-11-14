@@ -80,17 +80,18 @@ public class TransactionServiceImpl implements TransactionService {
             throw new RuntimeException("Something goes wrong, Can't perform transaction.");
         }
     }
+
     @Override
 //    @Cacheable()
-    public ApiResponse<PageableResponse> allTransactions(TransactionPageRequest transactionPageRequest,String email) {
+    public ApiResponse<PageableResponse> allTransactions(TransactionPageRequest transactionPageRequest, String email) {
         log.info("Request received for all transaction.");
-        UserDto userDto=null;
-        if(!email.isEmpty()) {
+        UserDto userDto = null;
+        if (!email.isEmpty()) {
             userDto = userService.userByEmail(email);
             if (userDto == null) throw new ResourceNotFoundException("user", "email", email);
         }
         Pageable p = org.springframework.data.domain.PageRequest.of(transactionPageRequest.getPageNumber(), transactionPageRequest.getPageSize(), Sort.by("createdAt").descending());
-        Page<Transactions> listOfTransactions = transactionDao.allTransactions(transactionPageRequest,userDto,p);
+        Page<Transactions> listOfTransactions = transactionDao.allTransactions(transactionPageRequest, userDto, p);
         return getTransactionPageableResponse(listOfTransactions);
     }
 
@@ -104,13 +105,14 @@ public class TransactionServiceImpl implements TransactionService {
         response.setTotalNoOfElements(listOfTransactions.getTotalElements());
         return new ApiResponse<>(response, "pageable response", 0);
     }
+
     @Override
     public ApiResponse<PageableResponse> ownTransactions(TransactionPageRequest transactionPageRequest) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        log.info("Request to view all own transactions by {}",authentication.getName());
+        log.info("Request to view all own transactions by {}", authentication.getName());
         UserDto user = userService.userByEmail(authentication.getName());
         Pageable p = PageRequest.of(transactionPageRequest.getPageNumber(), transactionPageRequest.getPageSize(), Sort.by("created_at").descending());
-        Page<Transactions> transactionsList = transactionDao.allTransactions(transactionPageRequest,user,p);
+        Page<Transactions> transactionsList = transactionDao.allTransactions(transactionPageRequest, user, p);
         return getTransactionPageableResponse(transactionsList);
     }
 }

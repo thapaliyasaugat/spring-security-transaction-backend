@@ -1,6 +1,4 @@
 package com.securitytest.securitytest.serviceImpl;
-
-import com.securitytest.securitytest.exceptions.ResourceNotFoundException;
 import com.securitytest.securitytest.models.Role;
 import com.securitytest.securitytest.repositories.RoleRepo;
 import com.securitytest.securitytest.resource.ApiResponse;
@@ -85,7 +83,7 @@ public class RoleServiceImpl implements RoleService {
     public ApiResponse<List<RoleDto>> userUpdateAvailableRoles(int id) {
         List<Role> rolesOfUser = roleRepo.roleOfUser(id);
         List<Role> allRoles = roleRepo.findAll();
-        List<Role> availableRoles = allRoles.stream().filter(role -> !rolesOfUser.stream().anyMatch(r -> r.getName().equals(role.getName()))).collect(Collectors.toList());
+        List<Role> availableRoles = allRoles.stream().filter(role -> !rolesOfUser.stream().anyMatch(r -> r.getName().equals(role.getName()))).toList();
         List<RoleDto> availableRolesDto = availableRoles.stream().map(role -> modelMapper.map(role, RoleDto.class)).collect(Collectors.toList());
         return new ApiResponse<>(availableRolesDto, "available role to update", 0);
     }

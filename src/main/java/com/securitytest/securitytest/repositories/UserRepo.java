@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.List;
 
 public interface UserRepo extends JpaRepository<User,Integer> {
+
     User findByEmail(String email);
     @Modifying
     @Query(value = "update users set balance=(:previousBalance+:amount) where email=:email",nativeQuery = true)

@@ -26,19 +26,23 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     public ApiResponse<UserDto> updateRole(UpdateRoleRequest updateRoleRequest) {
-        log.info("Request received to update :{} -> {}", updateRoleRequest.getUpdateRoleOfEmail(),updateRoleRequest.getRoleName());
+        log.info("Request received to update :{} -> {}", updateRoleRequest.getUpdateRoleOfEmail(), updateRoleRequest.getRoleName());
         UserDto user = userService.userByEmail(updateRoleRequest.getUpdateRoleOfEmail());
         RoleDto role = roleService.findByName(updateRoleRequest.getRoleName());
         validate(updateRoleRequest, user, role);
         userService.addUserRole(role, user.getId());
-        return new ApiResponse<>(user,"Role updated Successfully.",0);
+        return new ApiResponse<>(user, "Role updated Successfully.", 0);
     }
+
     private void validate(UpdateRoleRequest updateRoleRequest, UserDto user, RoleDto role) {
-        if(user == null) throw new ResourceNotFoundException("user","email", updateRoleRequest.getUpdateRoleOfEmail() );
-        if(role == null) throw new ResourceNotFoundException("role","name", updateRoleRequest.getRoleName());
-        if(checkContainsRole(roleService.getUserRoles(user.getEmail()), role)) throw new RuntimeException("User already have "+ updateRoleRequest.getRoleName() +" role.");
+        if (user == null)
+            throw new ResourceNotFoundException("user", "email", updateRoleRequest.getUpdateRoleOfEmail());
+        if (role == null) throw new ResourceNotFoundException("role", "name", updateRoleRequest.getRoleName());
+        if (checkContainsRole(roleService.getUserRoles(user.getEmail()), role))
+            throw new RuntimeException("User already have " + updateRoleRequest.getRoleName() + " role.");
     }
-    private boolean checkContainsRole(ApiResponse<List<RoleDto>> roleList, RoleDto role){
+
+    private boolean checkContainsRole(ApiResponse<List<RoleDto>> roleList, RoleDto role) {
         return roleList.getData().stream().anyMatch(r -> r.getName().equals(role.getName()));
     }
 }

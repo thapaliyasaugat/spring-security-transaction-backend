@@ -2,10 +2,7 @@ package com.securitytest.securitytest.resource;
 
 import lombok.*;
 
-import java.util.Date;
-
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -18,12 +15,4 @@ public class TransactionPageRequest {
     private Double fromAmount;
     private Double toAmount;
     private String code;
-
-    @Override
-    public String toString() {
-        return "PageRequestObj{" +
-                "pageNumber=" + pageNumber +
-                ", pageSize=" + pageSize +
-                '}';
-    }
 }

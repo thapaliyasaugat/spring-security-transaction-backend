@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface PrivilegeService {
     ApiResponse<List<PrivilegeDto>> allPrivilege();
-    ApiResponse<List<PrivilegeDto>> privilegesById(String role);
+    ApiResponse<List<PrivilegeDto>> privilegesByRole(String role);
 }

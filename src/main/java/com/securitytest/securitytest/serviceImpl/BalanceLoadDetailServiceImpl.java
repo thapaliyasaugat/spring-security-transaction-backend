@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
+
 @Service
 @Slf4j
 public class BalanceLoadDetailServiceImpl implements BalanceLoadDetailService {
@@ -30,36 +31,36 @@ public class BalanceLoadDetailServiceImpl implements BalanceLoadDetailService {
     @Override
     public ApiResponse<LoadBalancePageableResponse> myBalanceLoadedDetail(PageRequestObj pageRequestObj) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        log.info("Request to get loaded balance history by ,{}",authentication.getName());
-        Pageable pageable = PageRequest.of(pageRequestObj.getPageNumber(),pageRequestObj.getPageSize(), Sort.by("createdAt").descending());
-        Page<BalanceLoadDetail> balanceLoadDetailPage = balanceLoadRepo.findAllByLoadedBy(authentication.getName(),pageable);
+        log.info("Request to get loaded balance history by ,{}", authentication.getName());
+        Pageable pageable = PageRequest.of(pageRequestObj.getPageNumber(), pageRequestObj.getPageSize(), Sort.by("createdAt").descending());
+        Page<BalanceLoadDetail> balanceLoadDetailPage = balanceLoadRepo.findAllByLoadedBy(authentication.getName(), pageable);
         return getLoadBalancePageableResponseApiResponse(balanceLoadDetailPage);
     }
 
     @Override
     public ApiResponse<LoadBalancePageableResponse> AllBalanceLoadedDetail(PageRequestObj pageRequestObj) {
         log.info("Request to get all loaded balance history.");
-        Pageable pageable = PageRequest.of(pageRequestObj.getPageNumber(),pageRequestObj.getPageSize(), Sort.by("created_at").descending());
+        Pageable pageable = PageRequest.of(pageRequestObj.getPageNumber(), pageRequestObj.getPageSize(), Sort.by("created_at").descending());
         Page<BalanceLoadDetail> balanceLoadDetailPage = balanceLoadRepo.findAll(pageable);
         return getLoadBalancePageableResponseApiResponse(balanceLoadDetailPage);
     }
 
     @Override
-    public ApiResponse<LoadBalancePageableResponse> AllBalanceLoadedDetailByEmail(String email,PageRequestObj pageRequestObj) {
-        log.info("Request to get loaded balance history by email,{}",email);
-        Pageable pageable = PageRequest.of(pageRequestObj.getPageNumber(),pageRequestObj.getPageSize(), Sort.by("created_at").descending());
-        Page<BalanceLoadDetail> balanceLoadDetailPage = balanceLoadRepo.findAllByLoadedBy(email,pageable);
+    public ApiResponse<LoadBalancePageableResponse> AllBalanceLoadedDetailByEmail(String email, PageRequestObj pageRequestObj) {
+        log.info("Request to get loaded balance history by email,{}", email);
+        Pageable pageable = PageRequest.of(pageRequestObj.getPageNumber(), pageRequestObj.getPageSize(), Sort.by("created_at").descending());
+        Page<BalanceLoadDetail> balanceLoadDetailPage = balanceLoadRepo.findAllByLoadedBy(email, pageable);
         return getLoadBalancePageableResponseApiResponse(balanceLoadDetailPage);
     }
 
     private ApiResponse<LoadBalancePageableResponse> getLoadBalancePageableResponseApiResponse(Page<BalanceLoadDetail> balanceLoadDetailPage) {
-        List<BalanceLoadDetailDto> balanceLoadDetailDtos = balanceLoadDetailPage.getContent().stream().map(b->modelMapper.map(b,BalanceLoadDetailDto.class)).collect(Collectors.toList());
+        List<BalanceLoadDetailDto> balanceLoadDetailDtos = balanceLoadDetailPage.getContent().stream().map(b -> modelMapper.map(b, BalanceLoadDetailDto.class)).collect(Collectors.toList());
         LoadBalancePageableResponse response = new LoadBalancePageableResponse();
         response.setContent(balanceLoadDetailDtos);
         response.setPageNumber(balanceLoadDetailPage.getNumber());
         response.setPageSize(balanceLoadDetailPage.getSize());
         response.setTotalNoOfPages(balanceLoadDetailPage.getTotalPages());
         response.setTotalNoOfElements(balanceLoadDetailPage.getTotalElements());
-        return new ApiResponse<>(response,"loaded balance pageable response",0);
+        return new ApiResponse<>(response, "loaded balance pageable response", 0);
     }
 }

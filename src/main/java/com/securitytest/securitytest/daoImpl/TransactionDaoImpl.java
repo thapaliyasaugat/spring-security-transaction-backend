@@ -13,7 +13,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 
 import java.sql.ResultSet;
@@ -37,8 +36,8 @@ public class TransactionDaoImpl implements TransactionDao {
     @Override
     public Page<Transactions> allTransactions(TransactionPageRequest transactionPageRequest, UserDto user, Pageable pageable) {
         String query = "select * from transactions ";
-        Map<String,Object> parameter = new HashMap<>();
-        if(user!=null){
+        Map<String, Object> parameter = new HashMap<>();
+        if (user != null) {
             parameter.put("id", user.getId());
             if (transactionPageRequest.getFilter().equals("SEND") || transactionPageRequest.getFilter().equals("RECEIVED")) {
                 if (transactionPageRequest.getFilter().equals("SEND")) {
@@ -51,55 +50,56 @@ public class TransactionDaoImpl implements TransactionDao {
                 query += "where (transaction_from = :id or transaction_to = :id )";
             }
         }
-        if(transactionPageRequest.getFromDate() != null && transactionPageRequest.getToDate() != null){
+
+        if (transactionPageRequest.getFromDate() != null && transactionPageRequest.getToDate() != null) {
             try {
                 Date from = new SimpleDateFormat("yyyy-MM-dd").parse(transactionPageRequest.getFromDate());
                 Date to = new SimpleDateFormat("yyyy-MM-dd").parse(transactionPageRequest.getToDate());
-                DateValidator.ValidateDateRange(from, to);
+                DateValidator.validateDateRange(from, to);
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTime(to);
+                calendar.add(Calendar.HOUR_OF_DAY, 23);
+                calendar.add(Calendar.MINUTE, 59);
+                calendar.add(Calendar.SECOND, 59);
                 parameter.put("fromDate", from);
-                parameter.put("toDate", to);
-                query += user!=null ? "and created_at between :fromDate and :toDate " : "where created_at between :fromDate and :toDate " ;
-            }catch (Exception e){
-                log.info("ERROR WHILE PARSING DATE :: {}",e.getMessage());
+                parameter.put("toDate", calendar.getTime());
+                query += user != null ? "and created_at between :fromDate and :toDate " : "where created_at between :fromDate and :toDate ";
+            } catch (Exception e) {
+                log.info("ERROR WHILE PARSING DATE :: {}", e.getMessage());
                 throw new RuntimeException("Invalid Date type or interval.");
             }
         }
-        if(transactionPageRequest.getFromAmount()!=null && transactionPageRequest.getToAmount()!=null){
-            query+= user!=null || transactionPageRequest.getFromDate() != null && transactionPageRequest.getToDate() != null ? "and amount between :fromAmount and :toAmount" :
-                    "where amount between :fromAmount and :toAmount";
-            if(transactionPageRequest.getFromAmount()>transactionPageRequest.getToAmount()){
+
+        if (transactionPageRequest.getFromAmount() != null && transactionPageRequest.getToAmount() != null) {
+            query += user != null || transactionPageRequest.getFromDate() != null && transactionPageRequest.getToDate() != null ? "and amount between :fromAmount and :toAmount" : "where amount between :fromAmount and :toAmount";
+            if (transactionPageRequest.getFromAmount() > transactionPageRequest.getToAmount()) {
                 throw new RuntimeException("Invalid Amount Range.");
             }
             parameter.put("fromAmount", transactionPageRequest.getFromAmount());
             parameter.put("toAmount", transactionPageRequest.getToAmount());
         }
-        if(transactionPageRequest.getCode()!=null){
-            query+= user!=null || transactionPageRequest.getFromDate() != null && transactionPageRequest.getToDate() != null ||
-                    transactionPageRequest.getFromAmount()!=null && transactionPageRequest.getToAmount()!=null ?" and code=:code" : "where code=:code";
-            parameter.put("code",transactionPageRequest.getCode());
-        }
-        query+= " order by created_at desc";
-        List<Transactions> transactionsList = namedParameterJdbcTemplate.query(query,parameter, this::resultSetToTransactions);
 
-        final int start = (int)pageable.getOffset();
+        if (transactionPageRequest.getCode() != null) {
+            query += user != null || transactionPageRequest.getFromDate() != null && transactionPageRequest.getToDate() != null || transactionPageRequest.getFromAmount() != null && transactionPageRequest.getToAmount() != null ? " and code=:code" : "where code=:code";
+            parameter.put("code", transactionPageRequest.getCode());
+        }
+        query += " order by created_at desc";
+        List<Transactions> transactionsList = namedParameterJdbcTemplate.query(query, parameter, this::resultSetToTransactions);
+
+        final int start = (int) pageable.getOffset();
         final int end = Math.min((start + pageable.getPageSize()), transactionsList.size());
         Page<Transactions> transactionsPage;
-        transactionsPage = new PageImpl<>(transactionsList.subList(start,end),pageable, transactionsList.size());
+        transactionsPage = new PageImpl<>(transactionsList.subList(start, end), pageable, transactionsList.size());
         return transactionsPage;
     }
-    private Transactions resultSetToTransactions(ResultSet resultSet,int index){
+
+    private Transactions resultSetToTransactions(ResultSet resultSet, int index) {
         try {
             log.info("converting result set to transaction object.");
             UserDto fromUser = userService.userById(resultSet.getInt("transaction_from")).getData();
             UserDto toUser = userService.userById(resultSet.getInt("transaction_to")).getData();
-            return Transactions.builder()
-                    .id(resultSet.getInt("id"))
-                    .code(resultSet.getString("code"))
-                    .customer_from(modelMapper.map(fromUser,User.class))
-                    .customer_to(modelMapper.map(toUser,User.class))
-                    .amount(resultSet.getDouble("amount"))
-                    .build();
-        }catch (Exception e){
+            return Transactions.builder().id(resultSet.getInt("id")).code(resultSet.getString("code")).customer_from(modelMapper.map(fromUser, User.class)).customer_to(modelMapper.map(toUser, User.class)).amount(resultSet.getDouble("amount")).build();
+        } catch (Exception e) {
             log.error(e.getMessage());
             throw new RuntimeException("error mapping resultSet");
         }

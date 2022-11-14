@@ -1,10 +1,8 @@
 package com.securitytest.securitytest.resource;
 
-import com.securitytest.securitytest.models.RoleName;
 import lombok.*;
 
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder

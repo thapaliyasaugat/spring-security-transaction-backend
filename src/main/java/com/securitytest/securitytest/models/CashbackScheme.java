@@ -19,7 +19,7 @@ public class CashbackScheme extends DateAudit implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    private String Subject;
+    private String subject;
     private String description;
     private double rewardRate;
 

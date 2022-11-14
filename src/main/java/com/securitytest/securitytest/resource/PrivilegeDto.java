@@ -2,8 +2,7 @@ package com.securitytest.securitytest.resource;
 
 import lombok.*;
 
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder

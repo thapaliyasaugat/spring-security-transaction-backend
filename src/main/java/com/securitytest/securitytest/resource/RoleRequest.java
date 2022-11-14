@@ -10,7 +10,6 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@ToString
 public class RoleRequest {
     @NotEmpty(message = "roleName can't be empty.")
     private String name;

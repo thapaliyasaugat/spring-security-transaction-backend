@@ -16,7 +16,7 @@ public class PrivilegeServiceImpl implements PrivilegeService {
     private final PrivilegeRepo privilegeRepo;
     private final ModelMapper modelMapper;
 
-    public PrivilegeServiceImpl(PrivilegeRepo privilegeRepo, ModelMapper modelMapper) {
+    public PrivilegeServiceImpl(PrivilegeRepo privilegeRepo,ModelMapper modelMapper) {
         this.privilegeRepo = privilegeRepo;
         this.modelMapper = modelMapper;
     }
@@ -29,7 +29,7 @@ public class PrivilegeServiceImpl implements PrivilegeService {
     }
 
     @Override
-    public ApiResponse<List<PrivilegeDto>> privilegesById(String role) {
+    public ApiResponse<List<PrivilegeDto>> privilegesByRole(String role) {
         return null;
     }
 }

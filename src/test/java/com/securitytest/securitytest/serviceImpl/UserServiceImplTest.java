@@ -1,7 +1,6 @@
 package com.securitytest.securitytest.serviceImpl;
 
 import com.securitytest.securitytest.models.Role;
-import com.securitytest.securitytest.models.RoleName;
 import com.securitytest.securitytest.models.User;
 import com.securitytest.securitytest.repositories.UserRepo;
 import com.securitytest.securitytest.resource.*;
@@ -15,16 +14,12 @@ import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.test.context.support.WithMockUser;
 
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 class UserServiceImplTest {
@@ -102,12 +97,9 @@ class UserServiceImplTest {
         when(userRepo.findById(anyInt())).thenReturn(Optional.ofNullable(user));
         when(userRepo.save(any(User.class))).thenReturn(updatedUser);
         ApiResponse<UserDto> blockedUser = userServiceImpl.blockUser(1);
-//throw run time exception wwhrn already Blocked
-//        assertThrows(RuntimeException.class,()->());
         assertNotNull(blockedUser.getData());
         assertEquals(blockedUser.getData().getStatus(),UserStatus.BLOCKED);
     }
-
     @Test
     void activateUser() {
         User testUser = User.builder().id(1).userName("Saugat").email("saugat@email.com")
@@ -138,7 +130,6 @@ class UserServiceImplTest {
     void save() {
         when(userRepo.save(any(User.class))).thenReturn(user);
         UserDto savedUser = userServiceImpl.save(user);
-
         assertEquals(savedUser.getUserName(), "Saugat");
         assertNotEquals(savedUser.getStatus(), UserStatus.BLOCKED);
     }
@@ -178,9 +169,7 @@ class UserServiceImplTest {
         RoleDto roleDto=RoleDto.builder().id(1).name("ADMIN").build();
         when(userRepo.findById(anyInt())).thenReturn(Optional.ofNullable(user));
         when(userRepo.save(any(User.class))).thenReturn(roleUpdatedUser);
-
         userServiceImpl.addUserRole(roleDto,1); //returns nothing
-
     }
 
     @Test
